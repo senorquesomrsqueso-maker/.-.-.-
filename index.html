@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>El Gran Viaje de Vanessa - Edición Definitiva 🎂</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; }
+        body, html { width: 100%; height: 100%; overflow: hidden; background-color: #0b0f19; font-family: 'Courier New', Courier, monospace; color: #fff; }
+
+        /* --- CINEMÁTICA DE APERTURA --- */
+        #cinematic-container {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 100;
+            display: flex; justify-content: center; align-items: center; background: #000;
+            transition: opacity 1.5s ease;
+        }
+        .scene { position: absolute; width: 100%; height: 100%; display: none; justify-content: center; align-items: center; flex-direction: column; text-align: center; padding: 20px; }
+        .scene.active { display: flex; }
+
+        @keyframes runAction {
+            0% { transform: scale(0.2) translateX(-200px); opacity: 0; filter: blur(6px); }
+            50% { transform: scale(1) translateX(0px); opacity: 1; filter: blur(0); }
+            100% { transform: scale(1.5); opacity: 0; }
+        }
+        .runner-box { font-size: 70px; animation: runAction 3s forwards cubic-bezier(0.2, 0.8, 0.2, 1); }
+
+        @keyframes floatText {
+            0% { transform: translateY(-20px); opacity: 0; }
+            50% { transform: translateY(0); opacity: 1; text-shadow: 0 0 15px #88c0d0; }
+            100% { transform: translateY(20px); opacity: 0; }
+        }
+        .floating-q {
+            position: absolute; font-size: 20px; font-weight: bold; color: #88c0d0;
+            animation: floatText 3s infinite ease-in-out;
+        }
+
+        @keyframes explosionFlash {
+            0% { background: #000; }
+            50% { background: #ffffff; }
+            100% { background: #111318; }
+        }
+        .exploded { animation: explosionFlash 1.5s forwards; }
+
+        /* --- INTERFAZ DEL JUEGO GIGANTE (MÓVIL Y PC) --- */
+        #main-app {
+            display: none; width: 100%; height: 100%; background: #161b22;
+            flex-direction: column; align-items: center; justify-content: space-between; padding: 10px;
+        }
+
+        header { text-align: center; margin-bottom: 2px; }
+        header h1 { font-size: 16px; color: #56b6c2; letter-spacing: 1px; }
+        header p { font-size: 11px; color: #abb2bf; }
+
+        .game-layout {
+            display: flex; flex-direction: column; gap: 10px; width: 100%; max-width: 600px; flex-grow: 1; align-items: center; justify-content: center;
+        }
+
+        .canvas-container {
+            position: relative; border: 3px solid #3e4451; border-radius: 8px; box-shadow: 0 6px 20px rgba(0,0,0,0.6); overflow: hidden;
+            background: #1c2128;
+        }
+        canvas { display: block; }
+
+        /* Panel de Misiones y Diálogos */
+        .rpg-panel {
+            width: 100%; max-width: 500px; background: #21252b; border: 2px solid #3e4451; border-radius: 8px;
+            display: flex; flex-direction: column; justify-content: space-between; padding: 10px; height: 130px;
+        }
+        .dialogue-content { font-size: 12px; color: #abb2bf; line-height: 1.3; overflow-y: auto; height: 50px; }
+        .quest-status { font-size: 11px; color: #98c379; margin-top: 4px; }
+
+        /* Botones de Control Tactil para Teléfono */
+        .touch-controls {
+            display: grid; grid-template-columns: repeat(3, 60px); grid-template-rows: repeat(2, 50px); gap: 5px; justify-content: center; margin-bottom: 5px;
+        }
+        .t-btn {
+            background: #3b4252; border: 2px solid #434c5e; color: white; font-size: 20px; border-radius: 8px;
+            display: flex; align-items: center; justify-content: center; cursor: pointer; active { background: #5e81ac; }
+        }
+        .t-btn.up { grid-column: 2; grid-row: 1; }
+        .t-btn.left { grid-column: 1; grid-row: 2; }
+        .t-btn.down { grid-column: 2; grid-row: 2; }
+        .t-btn.right { grid-column: 3; grid-row: 2; }
+
+        .btn-finale {
+            background: #98c379; border: none; color: #161b22; padding: 8px; font-weight: bold;
+            cursor: pointer; border-radius: 4px; width: 100%; margin-top: 5px; display: none; font-size: 13px;
+        }
+
+        button.intro-btn {
+            background: transparent; border: 2px solid #fff; color: #fff; padding: 12px 24px;
+            font-size: 16px; cursor: pointer; border-radius: 6px; transition: 0.3s;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- CINEMÁTICA DE APERTURA -->
+    <div id="cinematic-container">
+        <div class="scene active" id="scene-run">
+            <div class="runner-box">🏃‍♀️💨</div>
+            <h2 style="margin-top: 15px; font-size: 18px;">ROMPIENDO BARRERAS...</h2>
+        </div>
+
+        <div class="scene" id="scene-fall">
+            <div class="floating-q" style="top: 25%; left: 15%;">¿Quién eres?</div>
+            <div class="floating-q" style="top: 55%; left: 50%;">¿Qué haces aquí?</div>
+            <h3 style="margin-top: 150px; color: #5c6370; font-size: 14px;">DESCENDIENDO AL MUNDO DE HISTORIAS...</h3>
+        </div>
+
+        <div class="scene" id="scene-reveal">
+            <h1 style="font-size: 2.2rem; margin-bottom: 10px;">¿Eres Vanessa?</h1>
+            <p style="color: #61afef; margin-bottom: 20px; font-size: 13px;">Lectora incansable y amante de los gatos.</p>
+            <button class="intro-btn" onclick="startExplosion()">¡Sí, soy yo! ✨</button>
+        </div>
+    </div>
+
+    <!-- JUEGO PRINCIPAL RPG (ADAPTADO A MÓVIL Y PC) -->
+    <div id="main-app">
+        <header>
+            <h1>🗺️ El Reino Literario de Vanessa</h1>
+            <p>Usa los controles táctiles o tu teclado para explorar el mapa gigante.</p>
+        </header>
+
+        <div class="game-layout">
+            <div class="canvas-container">
+                <!-- Lienzo amplio de gran resolución -->
+                <canvas id="gameCanvas" width="400" height="260"></canvas>
+            </div>
+
+            <div class="rpg-panel">
+                <div class="dialogue-content" id="dialogueBox">
+                    ¡Hola, Vanessa! Explora el gran mapa en busca del <b>Libro de la Armadura Oxidada</b> y los <b>Gatos del Reino</b>.
+                </div>
+                <div class="quest-status" id="questStatus">
+                    Misión: Hallar Libro [ ❌ ] | Hallar Gato [ ❌ ]
+                </div>
+                <button class="btn-finale" id="finaleBtn" onclick="triggerGrandFinale()">🎂 ¡Ver Sorpresa de Cumpleaños! 🎂</button>
+            </div>
+
+            <!-- Botones de Control para Teléfonos Móviles -->
+            <div class="touch-controls">
+                <div class="t-btn up" ontouchstart="setKey('ArrowUp', true)" ontouchend="setKey('ArrowUp', false)" onmousedown="setKey('ArrowUp', true)" onmouseup="setKey('ArrowUp', false)">⬆️</div>
+                <div class="t-btn left" ontouchstart="setKey('ArrowLeft', true)" ontouchend="setKey('ArrowLeft', false)" onmousedown="setKey('ArrowLeft', true)" onmouseup="setKey('ArrowLeft', false)">⬅️</div>
+                <div class="t-btn down" ontouchstart="setKey('ArrowDown', true)" ontouchend="setKey('ArrowDown', false)" onmousedown="setKey('ArrowDown', true)" onmouseup="setKey('ArrowDown', false)">⬇️</div>
+                <div class="t-btn right" ontouchstart="setKey('ArrowRight', true)" ontouchend="setKey('ArrowRight', false)" onmousedown="setKey('ArrowRight', true)" onmouseup="setKey('ArrowRight', false)">➡️</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        setTimeout(() => {
+            document.getElementById('scene-run').classList.remove('active');
+            document.getElementById('scene-fall').classList.add('active');
+        }, 3000);
+
+        setTimeout(() => {
+            document.getElementById('scene-fall').classList.remove('active');
+            document.getElementById('scene-reveal').classList.add('active');
+        }, 7000);
+
+        function startExplosion() {
+            const container = document.getElementById('cinematic-container');
+            container.classList.add('exploded');
+            setTimeout(() => {
+                container.style.display = 'none';
+                document.getElementById('main-app').style.display = 'flex';
+                initRPGGame();
+            }, 1200);
+        }
+
+        let keys = {};
+        function setKey(key, status) {
+            keys[key] = status;
+        }
+
+        // --- MOTOR DEL JUEGO GIGANTE ---
+        function initRPGGame() {
+            const canvas = document.getElementById('gameCanvas');
+            const ctx = canvas.getContext('2d');
+
+            // Coordenadas del jugador y de un mapa grande (virtualmente desplazable)
+            let player = { x: 50, y: 50, size: 20, speed: 3.2 };
+            
+            // Objetos distribuidos por el mapa amplio
+            let items = {
+                book: { x: 320, y: 180, size: 20, collected: false, icon: "📖" },
+                cat: { x: 700, y: 120, size: 20, collected: false, icon: "🐈" },
+                npc: { x: 500, y: 350, size: 22, interacted: false, icon: "🧙‍♂️" },
+                house: { x: 200, y: 280, width: 80, height: 60 }
+            };
+
+            // Tamaño real del mundo gigante (más grande que la pantalla visible)
+            let worldWidth = 900;
+            let worldHeight = 600;
+
+            window.addEventListener('keydown', e => keys[e.key] = true);
+            window.addEventListener('keyup', e => keys[e.key] = false);
+
+            function update() {
+                if ((keys['ArrowUp'] || keys['w']) && player.y > 10) player.y -= player.speed;
+                if ((keys['ArrowDown'] || keys['s']) && player.y < worldHeight - player.size - 10) player.y += player.speed;
+                if ((keys['ArrowLeft'] || keys['a']) && player.x > 10) player.x -= player.speed;
+                if ((keys['ArrowRight'] || keys['d']) && player.x < worldWidth - player.size - 10) player.x += player.speed;
+
+                // Colisión con el Libro
+                if (!items.book.collected && Math.abs(player.x - items.book.x) < 22 && Math.abs(player.y - items.book.y) < 22) {
+                    items.book.collected = true;
+                    document.getElementById('dialogueBox').innerHTML = "📖 <b>¡Encontraste 'El caballero de la armadura oxidada'!</b><br><i>“Las lágrimas de verdadero sentimiento deshacen cualquier armadura impuesta por el miedo.”</i>";
+                    updateQuests();
+                }
+
+                // Colisión con el Gato
+                if (!items.cat.collected && Math.abs(player.x - items.cat.x) < 22 && Math.abs(player.y - items.cat.y) < 22) {
+                    items.cat.collected = true;
+                    document.getElementById('dialogueBox').innerHTML = "🐈 <b>¡Encontraste al Gato del Reino!</b><br>El minino te acompaña ronroneando. Sabes que hoy es un día increíble para ti.";
+                    updateQuests();
+                }
+
+                // Interacción con NPC
+                if (!items.npc.interacted && Math.abs(player.x - items.npc.x) < 25 && Math.abs(player.y - items.npc.y) < 25) {
+                    items.npc.interacted = true;
+                    document.getElementById('dialogueBox').innerHTML = "🧙‍♂️ <b>Sabio Bibliotecario:</b><br>“¡Hola, Vanessa! Sigue adelante, disfruta de tu lectura y busca el último secreto para celebrar tu día.”";
+                }
+            }
+
+            function updateQuests() {
+                let bStr = items.book.collected ? "[ ✔️ ]" : "[ ❌ ]";
+                let cStr = items.cat.collected ? "[ ✔️ ]" : "[ ❌ ]";
+                document.getElementById('questStatus').innerHTML = `Misión: Libro ${bStr} | Gato ${cStr}`;
+
+                if (items.book.collected && items.cat.collected) {
+                    document.getElementById('finaleBtn').style.display = 'block';
+                    document.getElementById('dialogueBox').innerHTML = "🎉 <b>¡Misión Completada!</b> Ya puedes presionar el botón de sorpresa final.";
+                }
+            }
+
+            function draw() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+                // Cámara centrada en Vanessa (efecto desplazamiento de mapa grande)
+                let cameraX = player.x - canvas.width / 2;
+                let cameraY = player.y - canvas.height / 2;
+
+                // Limites de la cámara dentro del mundo
+                if (cameraX < 0) cameraX = 0;
+                if (cameraY < 0) cameraY = 0;
+                if (cameraX > worldWidth - canvas.width) cameraX = worldWidth - canvas.width;
+                if (cameraY > worldHeight - canvas.height) cameraY = worldHeight - canvas.height;
+
+                ctx.save();
+                ctx.translate(-cameraX, -cameraY);
+
+                // Dibujar el suelo del mundo gigante (pasto/adoquín simulado)
+                ctx.fillStyle = '#1c2128';
+                ctx.fillRect(0, 0, worldWidth, worldHeight);
+
+                // Cuadrícula decorativa
+                ctx.strokeStyle = '#2d333b';
+                ctx.lineWidth = 1;
+                for (let x = 0; x < worldWidth; x += 50) {
+                    ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, worldHeight); ctx.stroke();
+                }
+                for (let y = 0; y < worldHeight; y += 50) {
+                    ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(worldWidth, y); ctx.stroke();
+                }
+
+                // Dibujar Casa del mapa
+                ctx.fillStyle = '#434c5e';
+                ctx.fillRect(items.house.x, items.house.y, items.house.width, items.house.height);
+                ctx.fillStyle = '#81a1c1';
+                ctx.font = '12px sans-serif';
+                ctx.fillText('🏠 Biblioteca', items.house.x + 5, items.house.y + 35);
+
+                // Dibujar Libro
+                if (!items.book.collected) {
+                    ctx.font = '20px sans-serif';
+                    ctx.fillText(items.book.icon, items.book.x, items.book.y + 15);
+                }
+
+                // Dibujar Gato
+                if (!items.cat.collected) {
+                    ctx.font = '20px sans-serif';
+                    ctx.fillText(items.cat.icon, items.cat.x, items.cat.y + 15);
+                }
+
+                // Dibujar NPC
+                ctx.font = '20px sans-serif';
+                ctx.fillText(items.npc.icon, items.npc.x, items.npc.y + 15);
+
+                // Dibujar Jugador (Vanessa)
+                ctx.fillStyle = '#e06c75';
+                ctx.fillRect(player.x, player.y, player.size, player.size);
+                ctx.font = '16px sans-serif';
+                ctx.fillText('👩', player.x - 2, player.y + 16);
+
+                ctx.restore();
+            }
+
+            function loop() {
+                update();
+                draw();
+                requestAnimationFrame(loop);
+            }
+            loop();
+        }
+
+        function triggerGrandFinale() {
+            alert('🎉🎂 ¡FELIZ CUMPLEAÑOS, VANESSA! 🎂🎉\n\nHas completado toda la travesía en este mundo gigante. Que este día esté lleno de alegría, lectura fantástica, arte y gatitos felices. ¡Te mereces lo mejor! 💖✨');
+            location.reload();
+        }
+    </script>
+</body>
+</html>
