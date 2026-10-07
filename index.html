@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Para Vanessa - Un Viaje Especial</title>
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&family=Quicksand:wght@300;400;600&display=swap" rel="stylesheet">
+    <title>Para Vanessa - Mi Compañera de Vida</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&family=Quicksand:wght@300;400;500;600&display=swap" rel="stylesheet">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; user-select: none; }
         body, html { width: 100%; height: 100%; overflow: hidden; background-color: #020205; font-family: 'Quicksand', sans-serif; }
@@ -18,53 +18,67 @@
         /* Capa oscura para dar contraste al texto */
         .overlay {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            background: radial-gradient(circle, rgba(0,0,0,0.2) 0%, rgba(0,0,0,0.8) 100%);
+            background: radial-gradient(circle, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0.85) 100%);
             z-index: 2; pointer-events: none;
         }
 
         /* Contenedor principal de la historia */
         #story-container {
             position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            z-index: 10; width: 90%; max-width: 600px; display: flex; flex-direction: column; align-items: center;
+            z-index: 10; width: 90%; max-width: 650px; display: flex; flex-direction: column; align-items: center;
         }
 
         /* La "tarjeta" de cristal donde aparece el texto */
         .glass-panel {
-            width: 100%; padding: 40px; background: rgba(15, 15, 25, 0.4);
-            backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 16px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), inset 0 0 20px rgba(255, 119, 170, 0.05);
+            width: 100%; padding: 40px 30px; background: rgba(15, 15, 25, 0.4);
+            backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 119, 170, 0.2); border-radius: 20px;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.6), inset 0 0 20px rgba(255, 119, 170, 0.05);
             text-align: center; color: #fff;
             opacity: 0; transform: translateY(20px); transition: all 1s ease;
+            max-height: 80vh; display: flex; flex-direction: column;
         }
 
         .glass-panel.active { opacity: 1; transform: translateY(0); }
 
-        h1 { font-family: 'Cinzel', serif; font-size: 26px; color: #ff99cc; margin-bottom: 20px; text-shadow: 0 0 10px rgba(255, 119, 170, 0.4); letter-spacing: 1px; }
-        p { font-size: 16px; line-height: 1.8; color: #e2e8f0; margin-bottom: 15px; }
+        h1 { 
+            font-family: 'Cinzel', serif; font-size: 24px; color: #ff99cc; 
+            margin-bottom: 20px; text-shadow: 0 0 15px rgba(255, 119, 170, 0.5); 
+            letter-spacing: 1px; flex-shrink: 0;
+        }
+
+        /* Contenedor de texto con scroll para textos largos */
+        #text-content {
+            overflow-y: auto; padding-right: 10px; font-weight: 400;
+            /* Scrollbar styling */
+            scrollbar-width: thin; scrollbar-color: rgba(255, 119, 170, 0.5) transparent;
+        }
+        #text-content::-webkit-scrollbar { width: 6px; }
+        #text-content::-webkit-scrollbar-track { background: transparent; }
+        #text-content::-webkit-scrollbar-thumb { background: rgba(255, 119, 170, 0.5); border-radius: 10px; }
+
+        p { font-size: 17px; line-height: 1.8; color: #e2e8f0; margin-bottom: 20px; text-align: justify; text-shadow: 0 2px 4px rgba(0,0,0,0.5); }
+        p:last-child { margin-bottom: 0; }
 
         /* Botón para avanzar en la historia */
         .next-btn {
-            margin-top: 30px; padding: 12px 30px; font-family: 'Cinzel', serif; font-size: 14px;
-            color: #fff; background: transparent; border: 1px solid #ff77aa; border-radius: 25px;
-            cursor: pointer; transition: all 0.3s ease; text-transform: uppercase; letter-spacing: 2px;
-            box-shadow: 0 0 15px rgba(255, 119, 170, 0.2); outline: none;
+            margin-top: 30px; padding: 12px 35px; font-family: 'Cinzel', serif; font-size: 15px; font-weight: 600;
+            color: #fff; background: linear-gradient(45deg, transparent, rgba(255, 119, 170, 0.2), transparent); 
+            border: 1px solid #ff77aa; border-radius: 30px;
+            cursor: pointer; transition: all 0.4s ease; text-transform: uppercase; letter-spacing: 2px;
+            box-shadow: 0 0 15px rgba(255, 119, 170, 0.3); outline: none; flex-shrink: 0;
         }
 
-        .next-btn:hover { background: rgba(255, 119, 170, 0.2); box-shadow: 0 0 25px rgba(255, 119, 170, 0.5); transform: scale(1.05); }
+        .next-btn:hover { background: rgba(255, 119, 170, 0.3); box-shadow: 0 0 25px rgba(255, 119, 170, 0.6); transform: scale(1.05); }
 
-        /* Efecto de partículas brillantes que aparecen al hacer clic */
         .click-particle {
             position: absolute; width: 8px; height: 8px; background: #fff; border-radius: 50%;
-            pointer-events: none; z-index: 20; box-shadow: 0 0 10px #ff77aa;
+            pointer-events: none; z-index: 20; box-shadow: 0 0 12px #ff77aa;
             animation: explode 0.6s ease-out forwards;
         }
-        @keyframes explode {
-            0% { transform: scale(1); opacity: 1; }
-            100% { transform: scale(3); opacity: 0; }
-        }
+        @keyframes explode { 0% { transform: scale(1); opacity: 1; } 100% { transform: scale(3.5); opacity: 0; } }
 
-        .signature { font-family: 'Cinzel', serif; color: #ff77aa; margin-top: 25px; font-style: italic; font-size: 18px; display: none; }
+        .signature { font-family: 'Cinzel', serif; color: #ff77aa; margin-top: 30px; font-style: italic; font-size: 18px; display: none; text-align: right; }
     </style>
 </head>
 <body>
@@ -74,17 +88,17 @@
 
     <div id="story-container">
         <div class="glass-panel" id="panel">
-            <h1 id="title">El Inicio...</h1>
+            <h1 id="title">Para ti...</h1>
             <div id="text-content">
-                <p>Cargando el viaje...</p>
+                <p>Toca el botón de abajo para comenzar a leer.</p>
             </div>
-            <div class="signature" id="signature">Con todo mi cariño,<br>Mr. Queso</div>
+            <div class="signature" id="signature">Con todo mi infinito amor,<br>Tu programador favorito</div>
             <button class="next-btn" id="nextBtn">Comenzar</button>
         </div>
     </div>
 
     <script>
-        // --- SISTEMA DE FONDOS GENERATIVOS (CÓDIGO PURO) ---
+        // --- SISTEMA DE FONDOS GENERATIVOS ---
         const canvas = document.getElementById('background-canvas');
         const ctx = canvas.getContext('2d');
         let width, height;
@@ -97,72 +111,51 @@
             createElements();
         }
 
-        // Crear elementos dependiendo de la escena
         function createElements() {
             elements = [];
-            if (currentScene === 0 || currentScene === 1) {
-                // Escena 1 y 2: Estrellas estáticas y fugaces
-                for (let i = 0; i < 150; i++) {
-                    elements.push({
-                        x: Math.random() * width, y: Math.random() * height,
-                        s: Math.random() * 1.5, a: Math.random(),
-                        vx: 0, vy: 0, type: 'star'
-                    });
+            if (currentScene <= 1) {
+                // Cielo estrellado profundo y tranquilo
+                for (let i = 0; i < 180; i++) {
+                    elements.push({ x: Math.random() * width, y: Math.random() * height, s: Math.random() * 1.5, a: Math.random(), vx: 0, vy: 0, type: 'star' });
                 }
             } else if (currentScene === 2) {
-                // Escena 3: Ascensión (partículas subiendo, estilo Monster/Energía)
-                for (let i = 0; i < 100; i++) {
-                    elements.push({
-                        x: Math.random() * width, y: Math.random() * height,
-                        s: Math.random() * 3 + 1, a: Math.random() * 0.5 + 0.1,
-                        vx: 0, vy: Math.random() * -2 - 0.5, type: 'bubble'
-                    });
+                // Luces cálidas ascendentes (Representa la compañía y salir de la soledad)
+                for (let i = 0; i < 120; i++) {
+                    elements.push({ x: Math.random() * width, y: Math.random() * height, s: Math.random() * 2.5 + 1, a: Math.random() * 0.5 + 0.1, vx: Math.random() * 0.4 - 0.2, vy: Math.random() * -1.5 - 0.5, type: 'warm-light' });
                 }
             } else {
-                // Escena final: Lluvia de luz dorada/rosada
-                for (let i = 0; i < 200; i++) {
-                    elements.push({
-                        x: Math.random() * width, y: Math.random() * height,
-                        s: Math.random() * 2, a: Math.random(),
-                        vx: Math.random() * 1 - 0.5, vy: Math.random() * 2 + 1, type: 'light'
-                    });
+                // Lluvia de luz dorada y rosada (Celebración inmensa)
+                for (let i = 0; i < 250; i++) {
+                    elements.push({ x: Math.random() * width, y: Math.random() * height, s: Math.random() * 2, a: Math.random(), vx: Math.random() * 1 - 0.5, vy: Math.random() * 2 + 1, type: 'magic' });
                 }
             }
         }
 
         function drawBackground() {
-            // Colores de fondo por escena
             const bgColors = [
                 '#020205', // Noche profunda
-                '#0a0a1a', // Noche estrellada
-                '#0d1b2a', // Azul místico
-                '#1a0b1c'  // Amanecer rosado/púrpura
+                '#050a15', // Azul muy oscuro
+                '#100a1c', // Púrpura oscuro
+                '#1a0b12', // Tono rojizo/rosado romántico
+                '#1c0b15'  // Tono cálido final
             ];
             
-            // Transición suave de fondo (simulada)
-            ctx.fillStyle = bgColors[currentScene] || '#1a0b1c';
+            ctx.fillStyle = bgColors[currentScene] || '#1c0b15';
             ctx.fillRect(0, 0, width, height);
 
             elements.forEach(e => {
                 if (e.type === 'star') {
-                    e.a += (Math.random() - 0.5) * 0.05;
-                    e.a = Math.max(0.1, Math.min(1, e.a));
+                    e.a += (Math.random() - 0.5) * 0.05; e.a = Math.max(0.1, Math.min(1, e.a));
                     ctx.fillStyle = `rgba(255, 255, 255, ${e.a})`;
-                } else if (e.type === 'bubble') {
-                    e.y += e.vy;
-                    if (e.y < -10) e.y = height + 10;
-                    ctx.fillStyle = `rgba(100, 255, 150, ${e.a})`; // Tono energético
-                } else if (e.type === 'light') {
-                    e.y += e.vy; e.x += e.vx;
-                    if (e.y > height + 10) { e.y = -10; e.x = Math.random() * width; }
+                } else if (e.type === 'warm-light') {
+                    e.y += e.vy; e.x += e.vx; if (e.y < -10) { e.y = height + 10; e.x = Math.random() * width; }
+                    ctx.fillStyle = `rgba(255, 200, 150, ${e.a})`;
+                } else if (e.type === 'magic') {
+                    e.y += e.vy; e.x += e.vx; if (e.y > height + 10) { e.y = -10; e.x = Math.random() * width; }
                     ctx.fillStyle = Math.random() > 0.5 ? `rgba(255, 119, 170, ${e.a})` : `rgba(255, 215, 0, ${e.a})`;
                 }
-                
-                ctx.beginPath();
-                ctx.arc(e.x, e.y, e.s, 0, Math.PI * 2);
-                ctx.fill();
+                ctx.beginPath(); ctx.arc(e.x, e.y, e.s, 0, Math.PI * 2); ctx.fill();
             });
-
             requestAnimationFrame(drawBackground);
         }
 
@@ -170,27 +163,26 @@
         resize();
         drawBackground();
 
-
-        // --- SISTEMA DE LA HISTORIA (NARRATIVA VISUAL) ---
+        // --- SISTEMA DE LA CARTA (NARRATIVA) ---
         const story = [
             {
-                title: "Un Día Especial",
-                text: "<p>Hay días en el calendario que pasan desapercibidos, pero luego hay fechas que el universo marca con un brillo distinto.</p><p>Hoy, 7 de octubre, es uno de esos días.</p>",
-                btn: "Avanzar"
-            },
-            {
-                title: "El Valle de Tamo",
-                text: "<p>Sé que esperabas recorrer un mapa de plataformas, saltar y encontrar latas de Monster escondidas por ahí...</p><p>Pero a veces, las aventuras más bonitas no requieren saltos precisos, sino simplemente detenerse a observar lo increíble que eres.</p>",
-                btn: "Continuar"
-            },
-            {
-                title: "Tu Propia Magia",
-                text: "<p>Admiro profundamente esa creatividad infinita que tienes. Esa capacidad tuya para construir mundos, escribir códigos y darle forma a cosas maravillosas de la nada.</p><p>Eres una mente brillante, Vanessa, pero sobre todo, una persona que ilumina la vida de quienes tienen la suerte de rodearte.</p>",
+                title: "Nuestra Primera Conexión",
+                text: "<p>Aún recuerdo ese primer día en el que comenzamos a hablar. Fue como si de repente el universo alineara las piezas correctas de un rompecabezas que no sabía que estaba armando.</p><p>Conectamos de una manera que nunca imaginé posible, simplemente porque éramos increíblemente parecidos. Descubrimos que nos apasionaban los mismos libros, que disfrutábamos de las mismas cosas y, de alguna forma mágica, sentí que hablábamos exactamente el mismo idioma.</p><p>Hasta compartíamos ese amor incondicional por la misma bebida, nuestra infaltable Monster. Cada charla era, y sigue siendo, descubrir un pedacito de mí reflejado en ti.</p>",
                 btn: "Siguiente"
             },
             {
-                title: "Feliz Cumpleaños",
-                text: "<p>Así que, aunque no haya un 'Cofre Dorado' pixelado al final de un nivel de juego, este es mi tesoro para ti el día de hoy.</p><p>Que este nuevo año te traiga risas sinceras, éxitos en todo lo que te propongas, energía ilimitada y la absoluta certeza de que eres inmensamente valiosa.</p><p>Feliz cumpleaños, Vanessa.</p>",
+                title: "Mi Compañía en el Mundo",
+                text: "<p>Conocerte fue, sin lugar a dudas, una de las experiencias más hermosas e inesperadas que me ha regalado la vida.</p><p>Antes de ti, a veces sentía que caminaba a solas por este mundo, que no encajaba del todo. Pero tú llegaste para cambiarlo todo. Me ayudaste a entender que ya no estaba solo, que había encontrado a alguien que me comprende de verdad.</p><p>Te convertiste en mi refugio, en la compañía perfecta que siempre estuve buscando sin saberlo. Contigo, los días tienen otro color y hasta el silencio se siente cómodo.</p>",
+                btn: "Continuar"
+            },
+            {
+                title: "Una Pequeña Confesión",
+                text: "<p>Hoy es un día inmensamente importante, y quería darte algo diferente, algo gigante. Mi plan original era crear y programar un juego completo solo para ti, para que lo exploraras.</p><p>Pero, siendo muy sincero, me topé con muchos problemas técnicos en el código a último momento. Lo intenté con todas mis fuerzas, pero no quería que esos errores arruinaran tu cumpleaños ni entregarte algo a medias.</p><p>Por eso, preferí usar mi experiencia y todo lo que sé hacer para programar de cero este rincón especial para ti. No es el gran juego que imaginé en un principio, pero cada línea de código de esta carta, cada estrella de este fondo, fue escrita pensando única y exclusivamente en ti, con todo mi amor.</p>",
+                btn: "Leer el mensaje final"
+            },
+            {
+                title: "Feliz Cumpleaños, Mi Vida",
+                text: "<p>Hoy, 7 de octubre, el mundo entero debería celebrar, porque es el día en que naciste y el universo se volvió un lugar muchísimo más hermoso.</p><p>Quiero desearte el más feliz de los cumpleaños, Vanessa. Eres una mujer maravillosa, llena de luz, y tienes una magia que me cautiva un poco más todos los días. Admiro profundamente tu forma de ser, tu inteligencia y esa chispa única que te hace ser tú.</p><p>Quiero que sepas que siempre, pase lo que pase, voy a estar aquí para ti. Para apoyarte en cada locura, para celebrar tus triunfos por más pequeños que sean, y para sostenerte fuertemente la mano en los días grises.</p><p>Deseo desde lo más profundo de mi corazón que este nuevo año de vida te traiga infinitas alegrías, que logres todas esas metas que tienes en tu mente, y que nunca te falten motivos para sonreír (ni tampoco latas de Monster en la nevera para nuestras charlas).</p><p>Perdóname si este regalo tuvo que cambiar de forma y no fue el juego perfecto, pero te prometo que el amor que siento por ti sí es perfecto, y crece con cada segundo que tengo la suerte de pasar a tu lado.</p><p>Gracias por existir, gracias por cruzarte en mi camino, por ser mi compañera, mi cómplice y mi amor. Disfruta tu día al máximo, te lo mereces todo en este mundo.</p><p>Te amo muchísimo, Vanessa. Hoy y siempre.</p>",
                 btn: "Finalizar"
             }
         ];
@@ -205,12 +197,10 @@
         function updateStory() {
             if (currentStep >= story.length) return;
 
-            // Ocultar panel suavemente
             panel.classList.remove('active');
 
             setTimeout(() => {
                 if (currentStep === story.length - 1) {
-                    // Última escena
                     sigEl.style.display = 'block';
                     btnEl.style.display = 'none';
                 }
@@ -219,26 +209,22 @@
                 textEl.innerHTML = story[currentStep].text;
                 btnEl.innerHTML = story[currentStep].btn;
                 
+                // Forzar el scroll al inicio cuando cambia el texto
+                textEl.scrollTop = 0;
+                
                 currentScene = currentStep;
-                createElements(); // Cambiar el fondo según la escena
+                createElements(); 
 
-                // Mostrar panel suavemente
                 panel.classList.add('active');
-            }, 800); // Espera a que termine la transición de opacidad
+            }, 800);
         }
 
         btnEl.addEventListener('click', (e) => {
             currentStep++;
-            if (currentStep === 0) {
-                // Primer clic, iniciar música si la hubiera, arrancar historia
-                updateStory();
-            } else {
-                updateStory();
-            }
+            updateStory();
             createClickEffect(e.clientX, e.clientY);
         });
 
-        // Efecto visual al hacer clic
         function createClickEffect(x, y) {
             const particle = document.createElement('div');
             particle.classList.add('click-particle');
@@ -248,7 +234,6 @@
             setTimeout(() => particle.remove(), 600);
         }
 
-        // Iniciar pantalla inicial
         setTimeout(() => panel.classList.add('active'), 500);
 
     </script>
