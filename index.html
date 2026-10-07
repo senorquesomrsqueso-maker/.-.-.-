@@ -3,239 +3,238 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Para Vanessa - Mi Compañera de Vida</title>
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&family=Quicksand:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <title>Para Vanessa - 7 de Octubre</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&family=Quicksand:wght@300;400;600&display=swap" rel="stylesheet">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; user-select: none; }
-        body, html { width: 100%; height: 100%; overflow: hidden; background-color: #020205; font-family: 'Quicksand', sans-serif; }
+        body, html { width: 100%; height: 100%; overflow: hidden; background-color: #05050a; font-family: 'Quicksand', sans-serif; color: #fff; }
 
-        /* Contenedor del fondo animado */
-        #background-canvas {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1;
-            transition: background 2s ease;
-        }
+        /* Fondo Animado Generativo */
+        #bg-canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; }
+        .overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: radial-gradient(circle, rgba(5,5,10,0.4) 0%, rgba(5,5,10,0.9) 100%); z-index: 2; pointer-events: none; }
 
-        /* Capa oscura para dar contraste al texto */
-        .overlay {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            background: radial-gradient(circle, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0.85) 100%);
-            z-index: 2; pointer-events: none;
-        }
+        /* Contenedor de Pantallas */
+        .screen { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 10; display: flex; flex-direction: column; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.8s ease; padding: 20px; }
+        .screen.active { opacity: 1; pointer-events: auto; }
 
-        /* Contenedor principal de la historia */
-        #story-container {
-            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            z-index: 10; width: 90%; max-width: 650px; display: flex; flex-direction: column; align-items: center;
-        }
+        /* Estilos Generales de Botones */
+        .btn { margin-top: 20px; padding: 12px 25px; font-family: 'Quicksand', sans-serif; font-size: 15px; font-weight: 600; color: #fff; background: rgba(255, 119, 170, 0.2); border: 1px solid #ff77aa; border-radius: 8px; cursor: pointer; transition: all 0.3s; text-transform: uppercase; letter-spacing: 1px; box-shadow: 0 0 10px rgba(255, 119, 170, 0.2); }
+        .btn:hover { background: rgba(255, 119, 170, 0.4); box-shadow: 0 0 20px rgba(255, 119, 170, 0.5); transform: translateY(-2px); }
 
-        /* La "tarjeta" de cristal donde aparece el texto */
-        .glass-panel {
-            width: 100%; padding: 40px 30px; background: rgba(15, 15, 25, 0.4);
-            backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
-            border: 1px solid rgba(255, 119, 170, 0.2); border-radius: 20px;
-            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.6), inset 0 0 20px rgba(255, 119, 170, 0.05);
-            text-align: center; color: #fff;
-            opacity: 0; transform: translateY(20px); transition: all 1s ease;
-            max-height: 80vh; display: flex; flex-direction: column;
-        }
+        /* 1. Pantalla de Terminal / Código Roto */
+        .terminal-box { background: rgba(10, 10, 15, 0.9); border: 1px solid #333; border-radius: 10px; width: 100%; max-width: 600px; padding: 20px; font-family: 'Fira Code', monospace; font-size: 14px; box-shadow: 0 10px 30px rgba(0,0,0,0.8); }
+        .terminal-header { display: flex; gap: 8px; margin-bottom: 15px; border-bottom: 1px solid #333; padding-bottom: 10px; }
+        .dot { width: 12px; height: 12px; border-radius: 50%; }
+        .dot.r { background: #ff5f56; } .dot.y { background: #ffbd2e; } .dot.g { background: #27c93f; }
+        .line { margin-bottom: 8px; opacity: 0; animation: fadeIn 0.1s forwards; }
+        .error { color: #ff5f56; font-weight: bold; }
+        .warning { color: #ffbd2e; }
+        .success { color: #27c93f; }
+        .code-snippet { background: #1a1a24; padding: 10px; border-left: 3px solid #ff5f56; color: #a9b7c6; font-size: 12px; margin: 10px 0; overflow-x: auto; }
 
-        .glass-panel.active { opacity: 1; transform: translateY(0); }
+        /* 2. Pantalla de Historia (Tarjetas de Cristal) */
+        .glass-card { background: rgba(20, 20, 30, 0.5); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 16px; padding: 30px; max-width: 600px; width: 100%; text-align: center; box-shadow: 0 10px 40px rgba(0,0,0,0.5); }
+        .glass-card h2 { color: #ff99cc; margin-bottom: 15px; font-size: 22px; }
+        .glass-card p { font-size: 16px; line-height: 1.6; margin-bottom: 15px; color: #d1d5db; text-align: justify; }
 
-        h1 { 
-            font-family: 'Cinzel', serif; font-size: 24px; color: #ff99cc; 
-            margin-bottom: 20px; text-shadow: 0 0 15px rgba(255, 119, 170, 0.5); 
-            letter-spacing: 1px; flex-shrink: 0;
-        }
+        /* 3. Pantalla de Minijuego */
+        .game-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-top: 20px; max-width: 400px; width: 100%; }
+        .card { background: rgba(30, 30, 45, 0.8); border: 2px solid #ff77aa; border-radius: 10px; height: 80px; display: flex; align-items: center; justify-content: center; font-size: 30px; cursor: pointer; transition: transform 0.3s, background 0.3s; transform-style: preserve-3d; }
+        .card.flipped { background: #ff77aa; transform: rotateY(180deg); }
+        .card span { opacity: 0; transform: rotateY(180deg); transition: opacity 0.2s; }
+        .card.flipped span { opacity: 1; }
+        .card.matched { border-color: #27c93f; background: rgba(39, 201, 63, 0.2); pointer-events: none; }
 
-        /* Contenedor de texto con scroll para textos largos */
-        #text-content {
-            overflow-y: auto; padding-right: 10px; font-weight: 400;
-            /* Scrollbar styling */
-            scrollbar-width: thin; scrollbar-color: rgba(255, 119, 170, 0.5) transparent;
-        }
-        #text-content::-webkit-scrollbar { width: 6px; }
-        #text-content::-webkit-scrollbar-track { background: transparent; }
-        #text-content::-webkit-scrollbar-thumb { background: rgba(255, 119, 170, 0.5); border-radius: 10px; }
+        /* 4. Carta Final */
+        .letter-container { max-height: 70vh; overflow-y: auto; padding-right: 10px; }
+        .letter-container::-webkit-scrollbar { width: 6px; }
+        .letter-container::-webkit-scrollbar-track { background: rgba(0,0,0,0.2); border-radius: 10px; }
+        .letter-container::-webkit-scrollbar-thumb { background: #ff77aa; border-radius: 10px; }
+        .signature { text-align: right; margin-top: 20px; font-style: italic; color: #ff77aa; font-weight: bold; }
 
-        p { font-size: 17px; line-height: 1.8; color: #e2e8f0; margin-bottom: 20px; text-align: justify; text-shadow: 0 2px 4px rgba(0,0,0,0.5); }
-        p:last-child { margin-bottom: 0; }
-
-        /* Botón para avanzar en la historia */
-        .next-btn {
-            margin-top: 30px; padding: 12px 35px; font-family: 'Cinzel', serif; font-size: 15px; font-weight: 600;
-            color: #fff; background: linear-gradient(45deg, transparent, rgba(255, 119, 170, 0.2), transparent); 
-            border: 1px solid #ff77aa; border-radius: 30px;
-            cursor: pointer; transition: all 0.4s ease; text-transform: uppercase; letter-spacing: 2px;
-            box-shadow: 0 0 15px rgba(255, 119, 170, 0.3); outline: none; flex-shrink: 0;
-        }
-
-        .next-btn:hover { background: rgba(255, 119, 170, 0.3); box-shadow: 0 0 25px rgba(255, 119, 170, 0.6); transform: scale(1.05); }
-
-        .click-particle {
-            position: absolute; width: 8px; height: 8px; background: #fff; border-radius: 50%;
-            pointer-events: none; z-index: 20; box-shadow: 0 0 12px #ff77aa;
-            animation: explode 0.6s ease-out forwards;
-        }
-        @keyframes explode { 0% { transform: scale(1); opacity: 1; } 100% { transform: scale(3.5); opacity: 0; } }
-
-        .signature { font-family: 'Cinzel', serif; color: #ff77aa; margin-top: 30px; font-style: italic; font-size: 18px; display: none; text-align: right; }
+        @keyframes fadeIn { to { opacity: 1; } }
     </style>
 </head>
 <body>
 
-    <canvas id="background-canvas"></canvas>
+    <canvas id="bg-canvas"></canvas>
     <div class="overlay"></div>
 
-    <div id="story-container">
-        <div class="glass-panel" id="panel">
-            <h1 id="title">Para ti...</h1>
-            <div id="text-content">
-                <p>Toca el botón de abajo para comenzar a leer.</p>
+    <!-- PANTALLA 1: TERMINAL / ERROR -->
+    <div id="screen-terminal" class="screen active">
+        <div class="terminal-box">
+            <div class="terminal-header">
+                <div class="dot r"></div><div class="dot y"></div><div class="dot g"></div>
             </div>
-            <div class="signature" id="signature">Con todo mi infinito amor,<br>Tu programador favorito</div>
-            <button class="next-btn" id="nextBtn">Comenzar</button>
+            <div id="terminal-content"></div>
+            <button id="btn-rescue" class="btn" style="display: none; width: 100%; margin-top: 20px;">Ejecutar Plan B</button>
+        </div>
+    </div>
+
+    <!-- PANTALLA 2: HISTORIA 1 -->
+    <div id="screen-story1" class="screen">
+        <div class="glass-card">
+            <h2>Un Intento Fallido...</h2>
+            <p>Sé que estás leyendo esto y te preguntarás qué acaba de pasar. La verdad es que quería hacerte un regalo gigante y perfecto por tu cumpleaños. Estuve más de una semana programando un juego completo, diseñando mapas, texturas y mecánicas.</p>
+            <p>Pero a veces la tecnología tiene otros planes. El código colapsó por completo a última hora y me fue imposible recuperarlo.</p>
+            <p>También intenté hacerte llegar algo presencial, un detalle físico que pudieras tener en tus manos hoy... pero pasaron muchísimas cosas locas en el proceso que hicieron que fuera imposible entregarlo a tiempo (ya te contaré esa historia con calma, te vas a reír).</p>
+            <button id="btn-next1" class="btn">Siguiente</button>
+        </div>
+    </div>
+
+    <!-- PANTALLA 3: HISTORIA 2 -->
+    <div id="screen-story2" class="screen">
+        <div class="glass-card">
+            <h2>Pero no me iba a rendir</h2>
+            <p>A pesar de que el juego se dañó y el regalo presencial tuvo sus complicaciones, no podía dejar que el 7 de octubre pasara como un día cualquiera. Porque para mí, este día y tú son sumamente especiales.</p>
+            <p>Conocerte ha sido de las mejores casualidades. Aún recuerdo cómo conectamos desde la primera charla; hablábamos el mismo idioma, nos gustaban los mismos libros, y compartíamos el gusto por la Monster. Me hiciste entender que no estaba solo en esto y que había alguien ahí con quien realmente podía ser yo mismo.</p>
+            <p>Así que usé todo lo que sé hacer para programarte esta pequeña experiencia desde cero.</p>
+            <button id="btn-next2" class="btn">Aceptar el reto</button>
+        </div>
+    </div>
+
+    <!-- PANTALLA 4: MINIJUEGO -->
+    <div id="screen-minigame" class="screen">
+        <div class="glass-card">
+            <h2>Antes de tu regalo final...</h2>
+            <p>Reconstruí un pedacito de lo que iba a ser el juego. Encuentra las parejas que nos representan para desbloquear la carta final.</p>
+            <div class="game-grid" id="game-grid"></div>
+            <button id="btn-next3" class="btn" style="display: none; width: 100%;">Leer Carta de Cumpleaños</button>
+        </div>
+    </div>
+
+    <!-- PANTALLA 5: CARTA FINAL -->
+    <div id="screen-letter" class="screen">
+        <div class="glass-card">
+            <h2>Feliz Cumpleaños, Vanessa</h2>
+            <div class="letter-container">
+                <p>Hoy celebramos tu vida, tu existencia y el hecho de que coincidimos en este mundo tan inmenso. El 7 de octubre es un día que merece ser recordado, porque es el día en que nació alguien increíble.</p>
+                <p>Quiero decirte lo mucho que te aprecio y lo importante que te has vuelto para mí. Eres una gran compañera, alguien con quien puedo hablar horas y horas sintiendo que el tiempo vuela. Valoro enormemente tu inteligencia, tu forma de ver las cosas y lo mucho que nos parecemos.</p>
+                <p>Sé que este no es el regalo físico que esperaba darte, ni el juego gigante de una semana de programación que tenía en mente. Quedó convertido en esta pequeña página llena de código de emergencia, pero quiero que sepas que está hecha con todo el cariño, la dedicación y el esfuerzo posible, solo para sacarte una sonrisa hoy.</p>
+                <p>Te deseo el mejor de los cumpleaños. Espero que este nuevo año de vida te traiga tranquilidad, éxitos en todo lo que te propongas, muchísimos libros buenos por leer y unas cuantas Monster frías para acompañar nuestras charlas.</p>
+                <p>Gracias por ser tú. Gracias por hacerme sentir acompañado y por compartir tantas cosas conmigo. Siempre voy a estar aquí para escucharte, para apoyarte y para celebrar tus logros, grandes o pequeños.</p>
+                <p>Te quiero muchísimo. Disfruta tu día como nunca.</p>
+                <div class="signature">Tu desarrollador favorito</div>
+            </div>
         </div>
     </div>
 
     <script>
-        // --- SISTEMA DE FONDOS GENERATIVOS ---
-        const canvas = document.getElementById('background-canvas');
+        // --- 1. Lógica del Fondo Generativo ---
+        const canvas = document.getElementById('bg-canvas');
         const ctx = canvas.getContext('2d');
-        let width, height;
-        let elements = [];
-        let currentScene = 0;
+        let width, height, particles = [];
 
-        function resize() {
+        function initBackground() {
             width = canvas.width = window.innerWidth;
             height = canvas.height = window.innerHeight;
-            createElements();
-        }
-
-        function createElements() {
-            elements = [];
-            if (currentScene <= 1) {
-                // Cielo estrellado profundo y tranquilo
-                for (let i = 0; i < 180; i++) {
-                    elements.push({ x: Math.random() * width, y: Math.random() * height, s: Math.random() * 1.5, a: Math.random(), vx: 0, vy: 0, type: 'star' });
-                }
-            } else if (currentScene === 2) {
-                // Luces cálidas ascendentes (Representa la compañía y salir de la soledad)
-                for (let i = 0; i < 120; i++) {
-                    elements.push({ x: Math.random() * width, y: Math.random() * height, s: Math.random() * 2.5 + 1, a: Math.random() * 0.5 + 0.1, vx: Math.random() * 0.4 - 0.2, vy: Math.random() * -1.5 - 0.5, type: 'warm-light' });
-                }
-            } else {
-                // Lluvia de luz dorada y rosada (Celebración inmensa)
-                for (let i = 0; i < 250; i++) {
-                    elements.push({ x: Math.random() * width, y: Math.random() * height, s: Math.random() * 2, a: Math.random(), vx: Math.random() * 1 - 0.5, vy: Math.random() * 2 + 1, type: 'magic' });
-                }
+            particles = [];
+            for(let i=0; i<100; i++) {
+                particles.push({ x: Math.random() * width, y: Math.random() * height, s: Math.random() * 2, v: Math.random() * 0.5 + 0.2 });
             }
         }
 
         function drawBackground() {
-            const bgColors = [
-                '#020205', // Noche profunda
-                '#050a15', // Azul muy oscuro
-                '#100a1c', // Púrpura oscuro
-                '#1a0b12', // Tono rojizo/rosado romántico
-                '#1c0b15'  // Tono cálido final
-            ];
-            
-            ctx.fillStyle = bgColors[currentScene] || '#1c0b15';
-            ctx.fillRect(0, 0, width, height);
-
-            elements.forEach(e => {
-                if (e.type === 'star') {
-                    e.a += (Math.random() - 0.5) * 0.05; e.a = Math.max(0.1, Math.min(1, e.a));
-                    ctx.fillStyle = `rgba(255, 255, 255, ${e.a})`;
-                } else if (e.type === 'warm-light') {
-                    e.y += e.vy; e.x += e.vx; if (e.y < -10) { e.y = height + 10; e.x = Math.random() * width; }
-                    ctx.fillStyle = `rgba(255, 200, 150, ${e.a})`;
-                } else if (e.type === 'magic') {
-                    e.y += e.vy; e.x += e.vx; if (e.y > height + 10) { e.y = -10; e.x = Math.random() * width; }
-                    ctx.fillStyle = Math.random() > 0.5 ? `rgba(255, 119, 170, ${e.a})` : `rgba(255, 215, 0, ${e.a})`;
-                }
-                ctx.beginPath(); ctx.arc(e.x, e.y, e.s, 0, Math.PI * 2); ctx.fill();
+            ctx.clearRect(0, 0, width, height);
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.5)';
+            particles.forEach(p => {
+                p.y -= p.v;
+                if(p.y < 0) { p.y = height; p.x = Math.random() * width; }
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, p.s, 0, Math.PI * 2);
+                ctx.fill();
             });
             requestAnimationFrame(drawBackground);
         }
+        window.addEventListener('resize', initBackground);
+        initBackground(); drawBackground();
 
-        window.addEventListener('resize', resize);
-        resize();
-        drawBackground();
-
-        // --- SISTEMA DE LA CARTA (NARRATIVA) ---
-        const story = [
-            {
-                title: "Nuestra Primera Conexión",
-                text: "<p>Aún recuerdo ese primer día en el que comenzamos a hablar. Fue como si de repente el universo alineara las piezas correctas de un rompecabezas que no sabía que estaba armando.</p><p>Conectamos de una manera que nunca imaginé posible, simplemente porque éramos increíblemente parecidos. Descubrimos que nos apasionaban los mismos libros, que disfrutábamos de las mismas cosas y, de alguna forma mágica, sentí que hablábamos exactamente el mismo idioma.</p><p>Hasta compartíamos ese amor incondicional por la misma bebida, nuestra infaltable Monster. Cada charla era, y sigue siendo, descubrir un pedacito de mí reflejado en ti.</p>",
-                btn: "Siguiente"
-            },
-            {
-                title: "Mi Compañía en el Mundo",
-                text: "<p>Conocerte fue, sin lugar a dudas, una de las experiencias más hermosas e inesperadas que me ha regalado la vida.</p><p>Antes de ti, a veces sentía que caminaba a solas por este mundo, que no encajaba del todo. Pero tú llegaste para cambiarlo todo. Me ayudaste a entender que ya no estaba solo, que había encontrado a alguien que me comprende de verdad.</p><p>Te convertiste en mi refugio, en la compañía perfecta que siempre estuve buscando sin saberlo. Contigo, los días tienen otro color y hasta el silencio se siente cómodo.</p>",
-                btn: "Continuar"
-            },
-            {
-                title: "Una Pequeña Confesión",
-                text: "<p>Hoy es un día inmensamente importante, y quería darte algo diferente, algo gigante. Mi plan original era crear y programar un juego completo solo para ti, para que lo exploraras.</p><p>Pero, siendo muy sincero, me topé con muchos problemas técnicos en el código a último momento. Lo intenté con todas mis fuerzas, pero no quería que esos errores arruinaran tu cumpleaños ni entregarte algo a medias.</p><p>Por eso, preferí usar mi experiencia y todo lo que sé hacer para programar de cero este rincón especial para ti. No es el gran juego que imaginé en un principio, pero cada línea de código de esta carta, cada estrella de este fondo, fue escrita pensando única y exclusivamente en ti, con todo mi amor.</p>",
-                btn: "Leer el mensaje final"
-            },
-            {
-                title: "Feliz Cumpleaños, Mi Vida",
-                text: "<p>Hoy, 7 de octubre, el mundo entero debería celebrar, porque es el día en que naciste y el universo se volvió un lugar muchísimo más hermoso.</p><p>Quiero desearte el más feliz de los cumpleaños, Vanessa. Eres una mujer maravillosa, llena de luz, y tienes una magia que me cautiva un poco más todos los días. Admiro profundamente tu forma de ser, tu inteligencia y esa chispa única que te hace ser tú.</p><p>Quiero que sepas que siempre, pase lo que pase, voy a estar aquí para ti. Para apoyarte en cada locura, para celebrar tus triunfos por más pequeños que sean, y para sostenerte fuertemente la mano en los días grises.</p><p>Deseo desde lo más profundo de mi corazón que este nuevo año de vida te traiga infinitas alegrías, que logres todas esas metas que tienes en tu mente, y que nunca te falten motivos para sonreír (ni tampoco latas de Monster en la nevera para nuestras charlas).</p><p>Perdóname si este regalo tuvo que cambiar de forma y no fue el juego perfecto, pero te prometo que el amor que siento por ti sí es perfecto, y crece con cada segundo que tengo la suerte de pasar a tu lado.</p><p>Gracias por existir, gracias por cruzarte en mi camino, por ser mi compañera, mi cómplice y mi amor. Disfruta tu día al máximo, te lo mereces todo en este mundo.</p><p>Te amo muchísimo, Vanessa. Hoy y siempre.</p>",
-                btn: "Finalizar"
-            }
+        // --- 2. Lógica del Terminal ---
+        const terminalLines = [
+            { text: "> Iniciando compilación de 'Regalo_Perfecto_Vanessa'...", class: "line" },
+            { text: "> Cargando assets y mapas...", class: "line" },
+            { text: "> ERROR FATAL: Módulo de físicas corrupto.", class: "line error" },
+            { text: "> ERROR: Fallo de segmentación (core dumped).", class: "line error" },
+            { text: `<div class="code-snippet">Uncaught TypeError: Cannot read properties of undefined (reading 'regalo_presencial')<br>&nbsp;&nbsp;at intentarEnvioFisico (main.js:142:15)<br>&nbsp;&nbsp;at generarJuego (engine.js:88:9)</div>`, class: "line", isHtml: true },
+            { text: "> DIAGNÓSTICO: 168 horas de desarrollo (1 semana) perdidas.", class: "line warning" },
+            { text: "> Iniciando Protocolo de Emergencia...", class: "line warning" },
+            { text: "> Construyendo interfaz alternativa de rescate...", class: "line success" }
         ];
 
-        let currentStep = -1;
-        const panel = document.getElementById('panel');
-        const titleEl = document.getElementById('title');
-        const textEl = document.getElementById('text-content');
-        const btnEl = document.getElementById('nextBtn');
-        const sigEl = document.getElementById('signature');
+        let termContent = document.getElementById('terminal-content');
+        let termIndex = 0;
 
-        function updateStory() {
-            if (currentStep >= story.length) return;
-
-            panel.classList.remove('active');
-
-            setTimeout(() => {
-                if (currentStep === story.length - 1) {
-                    sigEl.style.display = 'block';
-                    btnEl.style.display = 'none';
+        function typeTerminal() {
+            if(termIndex < terminalLines.length) {
+                let div = document.createElement('div');
+                div.className = terminalLines[termIndex].class;
+                if(terminalLines[termIndex].isHtml) {
+                    div.innerHTML = terminalLines[termIndex].text;
+                } else {
+                    div.innerText = terminalLines[termIndex].text;
                 }
+                termContent.appendChild(div);
+                termIndex++;
+                setTimeout(typeTerminal, Math.random() * 800 + 400);
+            } else {
+                document.getElementById('btn-rescue').style.display = 'block';
+            }
+        }
+        setTimeout(typeTerminal, 1000);
 
-                titleEl.innerHTML = story[currentStep].title;
-                textEl.innerHTML = story[currentStep].text;
-                btnEl.innerHTML = story[currentStep].btn;
-                
-                // Forzar el scroll al inicio cuando cambia el texto
-                textEl.scrollTop = 0;
-                
-                currentScene = currentStep;
-                createElements(); 
-
-                panel.classList.add('active');
-            }, 800);
+        // --- 3. Lógica de Navegación entre Pantallas ---
+        function switchScreen(fromId, toId) {
+            document.getElementById(fromId).classList.remove('active');
+            setTimeout(() => document.getElementById(toId).classList.add('active'), 800);
         }
 
-        btnEl.addEventListener('click', (e) => {
-            currentStep++;
-            updateStory();
-            createClickEffect(e.clientX, e.clientY);
+        document.getElementById('btn-rescue').addEventListener('click', () => switchScreen('screen-terminal', 'screen-story1'));
+        document.getElementById('btn-next1').addEventListener('click', () => switchScreen('screen-story1', 'screen-story2'));
+        document.getElementById('btn-next2').addEventListener('click', () => switchScreen('screen-story2', 'screen-minigame'));
+        document.getElementById('btn-next3').addEventListener('click', () => switchScreen('screen-minigame', 'screen-letter'));
+
+        // --- 4. Lógica del Minijuego (Memoria) ---
+        const emojis = ['📖', '📖', '👾', '👾', '⚡', '⚡', '🌌', '🌌'];
+        let shuffled = emojis.sort(() => 0.5 - Math.random());
+        let grid = document.getElementById('game-grid');
+        let flippedCards = [];
+        let matches = 0;
+
+        shuffled.forEach((emoji, index) => {
+            let card = document.createElement('div');
+            card.className = 'card';
+            card.dataset.emoji = emoji;
+            card.dataset.index = index;
+            card.innerHTML = `<span>${emoji}</span>`;
+            
+            card.addEventListener('click', () => {
+                if(flippedCards.length < 2 && !card.classList.contains('flipped') && !card.classList.contains('matched')) {
+                    card.classList.add('flipped');
+                    flippedCards.push(card);
+
+                    if(flippedCards.length === 2) {
+                        setTimeout(checkMatch, 800);
+                    }
+                }
+            });
+            grid.appendChild(card);
         });
 
-        function createClickEffect(x, y) {
-            const particle = document.createElement('div');
-            particle.classList.add('click-particle');
-            particle.style.left = x - 4 + 'px';
-            particle.style.top = y - 4 + 'px';
-            document.body.appendChild(particle);
-            setTimeout(() => particle.remove(), 600);
+        function checkMatch() {
+            let [card1, card2] = flippedCards;
+            if(card1.dataset.emoji === card2.dataset.emoji) {
+                card1.classList.add('matched');
+                card2.classList.add('matched');
+                matches++;
+                if(matches === emojis.length / 2) {
+                    document.getElementById('btn-next3').style.display = 'block';
+                }
+            } else {
+                card1.classList.remove('flipped');
+                card2.classList.remove('flipped');
+            }
+            flippedCards = [];
         }
-
-        setTimeout(() => panel.classList.add('active'), 500);
-
     </script>
 </body>
 </html>
