@@ -33,12 +33,19 @@
         .code-snippet { background: #1a1a24; padding: 10px; border-left: 3px solid #ff5f56; color: #a9b7c6; font-size: 12px; margin: 10px 0; overflow-x: auto; }
 
         /* 2. Pantalla de Historia (Tarjetas de Cristal) */
-        .glass-card { background: rgba(20, 20, 30, 0.5); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 16px; padding: 30px; max-width: 600px; width: 100%; text-align: center; box-shadow: 0 10px 40px rgba(0,0,0,0.5); }
-        .glass-card h2 { color: #ff99cc; margin-bottom: 15px; font-size: 22px; }
-        .glass-card p { font-size: 16px; line-height: 1.6; margin-bottom: 15px; color: #d1d5db; text-align: justify; }
+        .glass-card { background: rgba(20, 20, 30, 0.5); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 16px; padding: 30px; max-width: 600px; width: 100%; text-align: center; box-shadow: 0 10px 40px rgba(0,0,0,0.5); display: flex; flex-direction: column; max-height: 85vh; }
+        .glass-card h2 { color: #ff99cc; margin-bottom: 15px; font-size: 22px; flex-shrink: 0; }
+        
+        .scrollable-text { overflow-y: auto; padding-right: 10px; text-align: justify; }
+        .scrollable-text::-webkit-scrollbar { width: 6px; }
+        .scrollable-text::-webkit-scrollbar-track { background: rgba(0,0,0,0.2); border-radius: 10px; }
+        .scrollable-text::-webkit-scrollbar-thumb { background: #ff77aa; border-radius: 10px; }
+        
+        .scrollable-text p { font-size: 16px; line-height: 1.6; margin-bottom: 15px; color: #d1d5db; }
+        .scrollable-text p:last-child { margin-bottom: 0; }
 
         /* 3. Pantalla de Minijuego */
-        .game-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-top: 20px; max-width: 400px; width: 100%; }
+        .game-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-top: 20px; max-width: 400px; width: 100%; margin-left: auto; margin-right: auto; }
         .card { background: rgba(30, 30, 45, 0.8); border: 2px solid #ff77aa; border-radius: 10px; height: 80px; display: flex; align-items: center; justify-content: center; font-size: 30px; cursor: pointer; transition: transform 0.3s, background 0.3s; transform-style: preserve-3d; }
         .card.flipped { background: #ff77aa; transform: rotateY(180deg); }
         .card span { opacity: 0; transform: rotateY(180deg); transition: opacity 0.2s; }
@@ -46,10 +53,6 @@
         .card.matched { border-color: #27c93f; background: rgba(39, 201, 63, 0.2); pointer-events: none; }
 
         /* 4. Carta Final */
-        .letter-container { max-height: 70vh; overflow-y: auto; padding-right: 10px; }
-        .letter-container::-webkit-scrollbar { width: 6px; }
-        .letter-container::-webkit-scrollbar-track { background: rgba(0,0,0,0.2); border-radius: 10px; }
-        .letter-container::-webkit-scrollbar-thumb { background: #ff77aa; border-radius: 10px; }
         .signature { text-align: right; margin-top: 20px; font-style: italic; color: #ff77aa; font-weight: bold; }
 
         @keyframes fadeIn { to { opacity: 1; } }
@@ -75,10 +78,12 @@
     <div id="screen-story1" class="screen">
         <div class="glass-card">
             <h2>Un Intento Fallido...</h2>
-            <p>Sé que estás leyendo esto y te preguntarás qué acaba de pasar. La verdad es que quería hacerte un regalo gigante y perfecto por tu cumpleaños. Estuve más de una semana programando un juego completo, diseñando mapas, texturas y mecánicas.</p>
-            <p>Pero a veces la tecnología tiene otros planes. El código colapsó por completo a última hora y me fue imposible recuperarlo.</p>
-            <p>También intenté hacerte llegar algo presencial, un detalle físico que pudieras tener en tus manos hoy... pero pasaron muchísimas cosas locas en el proceso que hicieron que fuera imposible entregarlo a tiempo (ya te contaré esa historia con calma, te vas a reír).</p>
-            <button id="btn-next1" class="btn">Siguiente</button>
+            <div class="scrollable-text">
+                <p>Sé que estás leyendo esto y te preguntarás qué acaba de pasar. La verdad es que quería hacerte un regalo gigante por tu cumpleaños. Estuve más de una semana programando un juego completo, diseñando mapas y mecánicas.</p>
+                <p>Pero la tecnología falló. El código colapsó a última hora y me fue imposible recuperarlo.</p>
+                <p>También intenté darte un regalo físico... pero lamentablemente se perdió en el proceso. Y te confieso que estoy bastante impactado por eso. No era solo un regalo cualquiera, era algo muy privado, algo mío que tenía guardado desde hace años. Perderlo realmente me pegó fuerte y me dejó con un nudo en la garganta.</p>
+            </div>
+            <button id="btn-next1" class="btn" style="flex-shrink: 0;">Siguiente</button>
         </div>
     </div>
 
@@ -86,10 +91,12 @@
     <div id="screen-story2" class="screen">
         <div class="glass-card">
             <h2>Pero no me iba a rendir</h2>
-            <p>A pesar de que el juego se dañó y el regalo presencial tuvo sus complicaciones, no podía dejar que el 7 de octubre pasara como un día cualquiera. Porque para mí, este día y tú son sumamente especiales.</p>
-            <p>Conocerte ha sido de las mejores casualidades. Aún recuerdo cómo conectamos desde la primera charla; hablábamos el mismo idioma, nos gustaban los mismos libros, y compartíamos el gusto por la Monster. Me hiciste entender que no estaba solo en esto y que había alguien ahí con quien realmente podía ser yo mismo.</p>
-            <p>Así que usé todo lo que sé hacer para programarte esta pequeña experiencia desde cero.</p>
-            <button id="btn-next2" class="btn">Aceptar el reto</button>
+            <div class="scrollable-text">
+                <p>A pesar de que el juego se dañó y de la tristeza por haber perdido ese regalo presencial tan importante para mí, no podía dejar que el 7 de octubre pasara en blanco. Porque tú eres especial.</p>
+                <p>Conocerte ha sido increíble. Aún recuerdo cómo conectamos desde la primera charla; hablábamos el mismo idioma, nos gustaban los mismos libros, y compartíamos el gusto por la Monster. Me hiciste entender que no estaba solo y que tenía una gran compañía.</p>
+                <p>Así que, a pesar de todo, usé mi experiencia para programar esto desde cero para ti.</p>
+            </div>
+            <button id="btn-next2" class="btn" style="flex-shrink: 0;">Aceptar el reto</button>
         </div>
     </div>
 
@@ -97,9 +104,11 @@
     <div id="screen-minigame" class="screen">
         <div class="glass-card">
             <h2>Antes de tu regalo final...</h2>
-            <p>Reconstruí un pedacito de lo que iba a ser el juego. Encuentra las parejas que nos representan para desbloquear la carta final.</p>
-            <div class="game-grid" id="game-grid"></div>
-            <button id="btn-next3" class="btn" style="display: none; width: 100%;">Leer Carta de Cumpleaños</button>
+            <div class="scrollable-text" style="text-align: center;">
+                <p>Reconstruí un pedacito de lo que iba a ser el juego. Encuentra las parejas que nos representan para desbloquear la carta final.</p>
+                <div class="game-grid" id="game-grid"></div>
+            </div>
+            <button id="btn-next3" class="btn" style="display: none; width: 100%; flex-shrink: 0;">Leer Carta de Cumpleaños</button>
         </div>
     </div>
 
@@ -107,12 +116,12 @@
     <div id="screen-letter" class="screen">
         <div class="glass-card">
             <h2>Feliz Cumpleaños, Vanessa</h2>
-            <div class="letter-container">
-                <p>Hoy celebramos tu vida, tu existencia y el hecho de que coincidimos en este mundo tan inmenso. El 7 de octubre es un día que merece ser recordado, porque es el día en que nació alguien increíble.</p>
-                <p>Quiero decirte lo mucho que te aprecio y lo importante que te has vuelto para mí. Eres una gran compañera, alguien con quien puedo hablar horas y horas sintiendo que el tiempo vuela. Valoro enormemente tu inteligencia, tu forma de ver las cosas y lo mucho que nos parecemos.</p>
-                <p>Sé que este no es el regalo físico que esperaba darte, ni el juego gigante de una semana de programación que tenía en mente. Quedó convertido en esta pequeña página llena de código de emergencia, pero quiero que sepas que está hecha con todo el cariño, la dedicación y el esfuerzo posible, solo para sacarte una sonrisa hoy.</p>
-                <p>Te deseo el mejor de los cumpleaños. Espero que este nuevo año de vida te traiga tranquilidad, éxitos en todo lo que te propongas, muchísimos libros buenos por leer y unas cuantas Monster frías para acompañar nuestras charlas.</p>
-                <p>Gracias por ser tú. Gracias por hacerme sentir acompañado y por compartir tantas cosas conmigo. Siempre voy a estar aquí para escucharte, para apoyarte y para celebrar tus logros, grandes o pequeños.</p>
+            <div class="scrollable-text">
+                <p>Hoy celebramos tu vida, tu existencia y el hecho de que coincidimos en este mundo. El 7 de octubre es un día que merece ser recordado.</p>
+                <p>Quiero decirte lo mucho que te aprecio y lo importante que te has vuelto para mí. Eres una gran compañera, alguien con quien puedo hablar horas y horas. Valoro enormemente tu inteligencia y lo mucho que nos parecemos.</p>
+                <p>Y aquí quiero pedirte perdón sincero. Quizás esta pantalla no sea lo que esperabas, o no sea la gran cosa comparado con otros regalos que puedas recibir hoy. De verdad lo intenté. Intenté programar el juego perfecto, intenté darte ese regalo físico que atesoraba tanto, pero todo salió mal.</p>
+                <p>A pesar de estar bastante desanimado por haber perdido ese objeto de años y ver todo mi código fallar, me rehusaba a dejarte sin nada. Saqué fuerzas de donde no tenía y programé este pequeño espacio de emergencia, porque a pesar de estar sin ánimos, quería hacerte algo bonito y único.</p>
+                <p>Espero de todo corazón que te guste este detalle. Te deseo el mejor de los cumpleaños, que logres todo lo que te propongas, que leas muchísimos libros buenos y que nunca falten las Monster en nuestras charlas.</p>
                 <p>Te quiero muchísimo. Disfruta tu día como nunca.</p>
                 <div class="signature">Tu desarrollador favorito</div>
             </div>
