@@ -3,363 +3,254 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Valle de Tamo - Edición Especial Vanessa</title>
-    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <title>Para Vanessa - Un Viaje Especial</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&family=Quicksand:wght@300;400;600&display=swap" rel="stylesheet">
     <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; touch-action: none; }
-        body {
-            background-color: #050508; color: #ffffff; font-family: 'Press Start 2P', monospace;
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-            min-height: 100vh; overflow: hidden;
+        * { margin: 0; padding: 0; box-sizing: border-box; user-select: none; }
+        body, html { width: 100%; height: 100%; overflow: hidden; background-color: #020205; font-family: 'Quicksand', sans-serif; }
+
+        /* Contenedor del fondo animado */
+        #background-canvas {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1;
+            transition: background 2s ease;
         }
 
-        #game-container {
-            position: relative; width: 100vw; max-width: 512px; height: 56vh; max-height: 384px;
-            background: #000; border: 4px solid #2d323f; border-radius: 8px;
-            box-shadow: 0 0 25px rgba(255, 119, 170, 0.3); overflow: hidden;
+        /* Capa oscura para dar contraste al texto */
+        .overlay {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: radial-gradient(circle, rgba(0,0,0,0.2) 0%, rgba(0,0,0,0.8) 100%);
+            z-index: 2; pointer-events: none;
         }
 
-        canvas { width: 100%; height: 100%; display: block; image-rendering: pixelated; image-rendering: crisp-edges; }
-
-        #dialog-box {
-            position: absolute; bottom: 8px; left: 8px; right: 8px;
-            background: rgba(10, 10, 18, 0.95); border: 3px solid #ff77aa; border-radius: 6px;
-            padding: 10px; font-size: 8px; line-height: 1.6; color: #fff; display: none;
-            box-shadow: inset 0 0 0 2px #000, 0 4px 10px rgba(0,0,0,0.8); z-index: 10;
+        /* Contenedor principal de la historia */
+        #story-container {
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            z-index: 10; width: 90%; max-width: 600px; display: flex; flex-direction: column; align-items: center;
         }
 
-        .dialog-speaker { color: #ff77aa; margin-bottom: 6px; text-transform: uppercase; font-size: 9px; }
-
-        #controls {
-            width: 100vw; max-width: 512px; height: 38vh; display: flex; justify-content: space-between;
-            align-items: center; padding: 10px 20px; background: #0b0d12; border-top: 2px solid #1a1d24;
+        /* La "tarjeta" de cristal donde aparece el texto */
+        .glass-panel {
+            width: 100%; padding: 40px; background: rgba(15, 15, 25, 0.4);
+            backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), inset 0 0 20px rgba(255, 119, 170, 0.05);
+            text-align: center; color: #fff;
+            opacity: 0; transform: translateY(20px); transition: all 1s ease;
         }
 
-        .dpad { display: grid; grid-template-columns: repeat(3, 48px); grid-template-rows: repeat(3, 48px); gap: 3px; }
-        .btn-pad { background: #1c202b; border: 2px solid #3a4154; color: #fff; font-family: 'Press Start 2P', monospace; font-size: 12px; border-radius: 6px; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 0 #0f1117; }
-        .btn-pad:active { transform: translateY(2px); box-shadow: 0 2px 0 #0f1117; background: #ff77aa; color: #000; }
-        
-        .action-container { display: flex; gap: 12px; }
-        .btn-action { width: 64px; height: 64px; border-radius: 50%; background: #ff77aa; border: 3px solid #fff; color: #000; font-family: 'Press Start 2P', monospace; font-size: 11px; font-weight: bold; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 0 #aa4477; }
-        .btn-action:active { transform: translateY(2px); box-shadow: 0 2px 0 #aa4477; background: #ff99cc; }
+        .glass-panel.active { opacity: 1; transform: translateY(0); }
+
+        h1 { font-family: 'Cinzel', serif; font-size: 26px; color: #ff99cc; margin-bottom: 20px; text-shadow: 0 0 10px rgba(255, 119, 170, 0.4); letter-spacing: 1px; }
+        p { font-size: 16px; line-height: 1.8; color: #e2e8f0; margin-bottom: 15px; }
+
+        /* Botón para avanzar en la historia */
+        .next-btn {
+            margin-top: 30px; padding: 12px 30px; font-family: 'Cinzel', serif; font-size: 14px;
+            color: #fff; background: transparent; border: 1px solid #ff77aa; border-radius: 25px;
+            cursor: pointer; transition: all 0.3s ease; text-transform: uppercase; letter-spacing: 2px;
+            box-shadow: 0 0 15px rgba(255, 119, 170, 0.2); outline: none;
+        }
+
+        .next-btn:hover { background: rgba(255, 119, 170, 0.2); box-shadow: 0 0 25px rgba(255, 119, 170, 0.5); transform: scale(1.05); }
+
+        /* Efecto de partículas brillantes que aparecen al hacer clic */
+        .click-particle {
+            position: absolute; width: 8px; height: 8px; background: #fff; border-radius: 50%;
+            pointer-events: none; z-index: 20; box-shadow: 0 0 10px #ff77aa;
+            animation: explode 0.6s ease-out forwards;
+        }
+        @keyframes explode {
+            0% { transform: scale(1); opacity: 1; }
+            100% { transform: scale(3); opacity: 0; }
+        }
+
+        .signature { font-family: 'Cinzel', serif; color: #ff77aa; margin-top: 25px; font-style: italic; font-size: 18px; display: none; }
     </style>
 </head>
 <body>
 
-    <div id="game-container">
-        <canvas id="gameCanvas" width="320" height="240"></canvas>
-        <div id="dialog-box">
-            <div class="dialog-speaker" id="dialog-speaker">PERSONAJE</div>
-            <div id="dialog-text">Texto...</div>
-        </div>
-    </div>
+    <canvas id="background-canvas"></canvas>
+    <div class="overlay"></div>
 
-    <div id="controls">
-        <div class="dpad">
-            <div></div><button class="btn-pad" id="btn-up">▲</button><div></div>
-            <button class="btn-pad" id="btn-left">◄</button><div></div><button class="btn-pad" id="btn-right">►</button>
-            <div></div><button class="btn-pad" id="btn-down">▼</button><div></div>
+    <div id="story-container">
+        <div class="glass-panel" id="panel">
+            <h1 id="title">El Inicio...</h1>
+            <div id="text-content">
+                <p>Cargando el viaje...</p>
+            </div>
+            <div class="signature" id="signature">Con todo mi cariño,<br>Mr. Queso</div>
+            <button class="next-btn" id="nextBtn">Comenzar</button>
         </div>
-        <div class="action-container"><button class="btn-action" id="btn-a">A</button></div>
     </div>
 
     <script>
-        const canvas = document.getElementById('gameCanvas');
+        // --- SISTEMA DE FONDOS GENERATIVOS (CÓDIGO PURO) ---
+        const canvas = document.getElementById('background-canvas');
         const ctx = canvas.getContext('2d');
-        ctx.imageSmoothingEnabled = false;
+        let width, height;
+        let elements = [];
+        let currentScene = 0;
 
-        const dialogBox = document.getElementById('dialog-box');
-        const dialogSpeaker = document.getElementById('dialog-speaker');
-        const dialogText = document.getElementById('dialog-text');
-
-        // Configuración de Mundo Gigante
-        const WORLD_W = 800;
-        const WORLD_H = 800;
-        
-        // Cámara
-        const camera = { x: 0, y: 0, w: canvas.width, h: canvas.height };
-
-        const textures = {};
-        const zipList = [
-            "House_1_Wood_Base_Blue.zip", "Oak_Tree_Small.zip", "Fences.zip", 
-            "Path_Tile.zip", "FarmLand_Tile.zip", "Chicken.zip", "Cow.zip", 
-            "Pig.zip", "Sheep.zip", "Bridge_Wood.zip", "Water_Tile.zip", 
-            "Cliff_Tile.zip", "Skeleton.zip", "Slime_Green.zip", "Chest.zip"
-        ];
-
-        let gameState = 'LOADING'; // LOADING -> INTRO -> EXPLOSION -> PLAY
-        let zipsLoaded = 0;
-        let particles = [];
-        let bannerTimer = 0;
-
-        // Jugador inicia en el centro del mundo
-        const player = { x: 400, y: 400, w: 16, h: 16, speed: 2.0 };
-        const inputs = { up: false, down: false, left: false, right: false };
-
-        // Generación del Mapa Gigante
-        const trees = [];
-        for(let i=0; i<100; i++) trees.push({x: Math.random() * WORLD_W, y: Math.random() * WORLD_H});
-        
-        const animals = [
-            { type: 'chicken', x: 350, y: 480, vx: 0, vy: 0, timer: 0 },
-            { type: 'chicken', x: 360, y: 490, vx: 0, vy: 0, timer: 0 },
-            { type: 'cow', x: 380, y: 470, vx: 0, vy: 0, timer: 0 },
-            { type: 'pig', x: 320, y: 485, vx: 0, vy: 0, timer: 0 },
-            { type: 'sheep', x: 340, y: 500, vx: 0, vy: 0, timer: 0 }
-        ];
-
-        const enemies = [
-            { type: 'slime_green', x: 500, y: 300 },
-            { type: 'slime_green', x: 520, y: 320 },
-            { type: 'skeleton', x: 680, y: 380 } // Protege el cofre
-        ];
-
-        // Extractor de ZIPs (Avanzado y Estricto)
-        async function loadAssets() {
-            for (let zipName of zipList) {
-                try {
-                    const res = await fetch(zipName);
-                    if (!res.ok) throw new Error("No encontrado");
-                    const blob = await res.blob();
-                    const zip = new JSZip();
-                    const zipContent = await zip.loadAsync(blob);
-
-                    // Buscar cualquier PNG dentro del ZIP (ignorando MACOSX)
-                    const imageFiles = Object.values(zipContent.files).filter(f => !f.dir && !f.name.includes('__MACOSX') && /\.(png|jpg|gif)$/i.test(f.name));
-                    
-                    if (imageFiles.length > 0) {
-                        const file = imageFiles[0];
-                        const imgBlob = await file.async("blob");
-                        const url = URL.createObjectURL(imgBlob);
-                        const img = new Image();
-                        img.src = url;
-                        await new Promise(r => img.onload = r);
-                        
-                        const keyName = zipName.replace('.zip', '').toLowerCase();
-                        textures[keyName] = img;
-                    }
-                } catch (e) {
-                    console.error("Fallo al cargar: " + zipName);
-                }
-                zipsLoaded++;
-            }
-            // Cuando termina, pasa a la intro
-            gameState = 'INTRO';
+        function resize() {
+            width = canvas.width = window.innerWidth;
+            height = canvas.height = window.innerHeight;
+            createElements();
         }
 
-        function drawSprite(key, x, y, w, h, fallbackColor) {
-            const img = textures[key.toLowerCase()];
-            if (img && img.complete) {
-                ctx.drawImage(img, x, y, w, h);
+        // Crear elementos dependiendo de la escena
+        function createElements() {
+            elements = [];
+            if (currentScene === 0 || currentScene === 1) {
+                // Escena 1 y 2: Estrellas estáticas y fugaces
+                for (let i = 0; i < 150; i++) {
+                    elements.push({
+                        x: Math.random() * width, y: Math.random() * height,
+                        s: Math.random() * 1.5, a: Math.random(),
+                        vx: 0, vy: 0, type: 'star'
+                    });
+                }
+            } else if (currentScene === 2) {
+                // Escena 3: Ascensión (partículas subiendo, estilo Monster/Energía)
+                for (let i = 0; i < 100; i++) {
+                    elements.push({
+                        x: Math.random() * width, y: Math.random() * height,
+                        s: Math.random() * 3 + 1, a: Math.random() * 0.5 + 0.1,
+                        vx: 0, vy: Math.random() * -2 - 0.5, type: 'bubble'
+                    });
+                }
             } else {
-                ctx.fillStyle = fallbackColor;
-                ctx.fillRect(x, y, w, h);
+                // Escena final: Lluvia de luz dorada/rosada
+                for (let i = 0; i < 200; i++) {
+                    elements.push({
+                        x: Math.random() * width, y: Math.random() * height,
+                        s: Math.random() * 2, a: Math.random(),
+                        vx: Math.random() * 1 - 0.5, vy: Math.random() * 2 + 1, type: 'light'
+                    });
+                }
             }
         }
 
-        function triggerPixelExplosion() {
-            gameState = 'EXPLOSION';
-            particles = [];
-            for (let i = 0; i < 250; i++) {
-                particles.push({
-                    x: canvas.width / 2, y: canvas.height / 2,
-                    vx: (Math.random() - 0.5) * 10, vy: (Math.random() - 0.5) * 10,
-                    size: Math.random() * 5 + 2,
-                    color: ['#ff77aa', '#58a6ff', '#3fb950', '#d29922', '#ffffff'][Math.floor(Math.random() * 5)],
-                    life: 1.0
-                });
-            }
-        }
+        function drawBackground() {
+            // Colores de fondo por escena
+            const bgColors = [
+                '#020205', // Noche profunda
+                '#0a0a1a', // Noche estrellada
+                '#0d1b2a', // Azul místico
+                '#1a0b1c'  // Amanecer rosado/púrpura
+            ];
+            
+            // Transición suave de fondo (simulada)
+            ctx.fillStyle = bgColors[currentScene] || '#1a0b1c';
+            ctx.fillRect(0, 0, width, height);
 
-        function renderWorld() {
-            // Fondo Base del Mundo Gigante
-            ctx.fillStyle = "#1b4332";
-            ctx.fillRect(0, 0, WORLD_W, WORLD_H);
-
-            // Camino principal
-            for (let x = 300; x < 600; x += 16) {
-                drawSprite("path_tile", x, 420, 16, 16, "#3d2b1f");
-            }
-
-            // Gran Río
-            for (let y = 0; y < WORLD_H; y += 16) {
-                drawSprite("water_tile", 600, y, 32, 16, "#1d4ed8");
-            }
-            // Puente
-            drawSprite("bridge_wood", 590, 410, 48, 32, "#854d0e");
-
-            // Granja
-            for(let tx = 310; tx < 400; tx += 32) {
-                for(let ty = 460; ty < 520; ty += 32) {
-                    drawSprite("farmland_tile", tx, ty, 32, 32, "#78350f");
+            elements.forEach(e => {
+                if (e.type === 'star') {
+                    e.a += (Math.random() - 0.5) * 0.05;
+                    e.a = Math.max(0.1, Math.min(1, e.a));
+                    ctx.fillStyle = `rgba(255, 255, 255, ${e.a})`;
+                } else if (e.type === 'bubble') {
+                    e.y += e.vy;
+                    if (e.y < -10) e.y = height + 10;
+                    ctx.fillStyle = `rgba(100, 255, 150, ${e.a})`; // Tono energético
+                } else if (e.type === 'light') {
+                    e.y += e.vy; e.x += e.vx;
+                    if (e.y > height + 10) { e.y = -10; e.x = Math.random() * width; }
+                    ctx.fillStyle = Math.random() > 0.5 ? `rgba(255, 119, 170, ${e.a})` : `rgba(255, 215, 0, ${e.a})`;
                 }
-            }
-            // Cercas
-            for(let fx = 310; fx < 400; fx += 16) drawSprite("fences", fx, 460, 16, 16, "#a16207");
-
-            // Árboles Gigantes (Bosque)
-            trees.forEach(t => {
-                // Evitar dibujar árboles sobre el centro, el río o el camino
-                if (t.x > 300 && t.x < 450 && t.y > 350 && t.y < 550) return; 
-                if (t.x > 580 && t.x < 650) return;
-                drawSprite("oak_tree_small", t.x, t.y, 32, 48, "#15803d");
-            });
-
-            // Casa Azul de Vanessa (Centro)
-            drawSprite("house_1_wood_base_blue", 360, 360, 64, 64, "#2563eb");
-
-            // Objetos Únicos
-            ctx.fillStyle = "#22c55e"; // Monster
-            ctx.fillRect(450, 400 + Math.sin(Date.now()*0.005)*2, 10, 16);
-            ctx.fillStyle = "#fff"; ctx.font = "8px 'Press Start 2P'"; ctx.fillText("M", 451, 412 + Math.sin(Date.now()*0.005)*2);
-
-            // Animales
-            animals.forEach(a => {
-                a.timer++;
-                if (a.timer > 50 + Math.random() * 50) {
-                    a.timer = 0; a.vx = (Math.random() - 0.5) * 0.5; a.vy = (Math.random() - 0.5) * 0.5;
-                }
-                a.x += a.vx; a.y += a.vy;
-                a.x = Math.max(310, Math.min(390, a.x)); a.y = Math.max(470, Math.min(510, a.y));
-                drawSprite(a.type, a.x, a.y, 16, 16, a.type === 'chicken'?'#fde047':'#ffffff');
-            });
-
-            // Enemigos/Guardianes
-            enemies.forEach(e => {
-                drawSprite(e.type, e.x, e.y, 20, 20, e.type === 'skeleton'?'#cbd5e1':'#4ade80');
-            });
-
-            // Cofre Gigante (Al otro lado del puente)
-            drawSprite("chest", 700, 415, 24, 24, "#eab308");
-
-            // Jugador
-            ctx.fillStyle = "#ff77aa";
-            ctx.fillRect(player.x, player.y, player.w, player.h);
-            ctx.fillStyle = "#fff";
-            ctx.font = "10px 'Press Start 2P'";
-            ctx.fillText("👑", player.x - 2, player.y - 5);
-        }
-
-        function gameLoop() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-            if (gameState === 'LOADING') {
-                ctx.fillStyle = "#050508"; ctx.fillRect(0, 0, canvas.width, canvas.height);
-                ctx.fillStyle = "#ff77aa"; ctx.font = "10px 'Press Start 2P'"; ctx.textAlign = "center";
-                ctx.fillText("CARGANDO TEXTURAS...", canvas.width / 2, canvas.height / 2 - 10);
-                ctx.fillStyle = "#ffffff"; ctx.font = "8px 'Press Start 2P'";
-                ctx.fillText(`${zipsLoaded} / 15 Archivos ZIP`, canvas.width / 2, canvas.height / 2 + 10);
-            } 
-            else if (gameState === 'INTRO') {
-                ctx.fillStyle = "#050508"; ctx.fillRect(0, 0, canvas.width, canvas.height);
-                ctx.fillStyle = "#ff77aa"; ctx.font = "12px 'Press Start 2P'"; ctx.textAlign = "center";
-                ctx.fillText("¿QUIÉN ERES?", canvas.width / 2, canvas.height / 2 - 20);
-                ctx.fillStyle = "#8b949e"; ctx.font = "8px 'Press Start 2P'";
-                ctx.fillText("El destino del valle gigante...", canvas.width / 2, canvas.height / 2 + 10);
-                ctx.fillStyle = "#ffffff"; ctx.globalAlpha = Math.abs(Math.sin(Date.now() * 0.004));
-                ctx.fillText("[ TOCA PARA COMENZAR ]", canvas.width / 2, canvas.height / 2 + 50);
-                ctx.globalAlpha = 1.0;
-            } 
-            else if (gameState === 'EXPLOSION') {
-                ctx.fillStyle = "#000"; ctx.fillRect(0, 0, canvas.width, canvas.height);
-                let alive = false;
-                for (let p of particles) {
-                    p.x += p.vx; p.y += p.vy; p.life -= 0.02;
-                    if (p.life > 0) { alive = true; ctx.fillStyle = p.color; ctx.fillRect(p.x, p.y, p.size, p.size); }
-                }
-                if (!alive) { gameState = 'PLAY'; bannerTimer = 200; }
-            } 
-            else if (gameState === 'PLAY') {
-                // Movimiento
-                if (inputs.up) player.y -= player.speed;
-                if (inputs.down) player.y += player.speed;
-                if (inputs.left) player.x -= player.speed;
-                if (inputs.right) player.x += player.speed;
                 
-                player.x = Math.max(0, Math.min(WORLD_W - player.w, player.x));
-                player.y = Math.max(0, Math.min(WORLD_H - player.h, player.y));
+                ctx.beginPath();
+                ctx.arc(e.x, e.y, e.s, 0, Math.PI * 2);
+                ctx.fill();
+            });
 
-                // Cámara sigue al jugador
-                camera.x = player.x - camera.w / 2;
-                camera.y = player.y - camera.h / 2;
-                camera.x = Math.max(0, Math.min(WORLD_W - camera.w, camera.x));
-                camera.y = Math.max(0, Math.min(WORLD_H - camera.h, camera.y));
+            requestAnimationFrame(drawBackground);
+        }
 
-                // Renderizar Mundo con Cámara
-                ctx.save();
-                ctx.translate(-camera.x, -camera.y);
-                renderWorld();
-                ctx.restore();
+        window.addEventListener('resize', resize);
+        resize();
+        drawBackground();
 
-                // UI Fija sobre la cámara
-                if (bannerTimer > 0) {
-                    bannerTimer--;
-                    ctx.fillStyle = "rgba(10, 10, 18, 0.85)"; ctx.fillRect(10, 10, canvas.width - 20, 30);
-                    ctx.strokeStyle = "#ff77aa"; ctx.strokeRect(10, 10, canvas.width - 20, 30);
-                    ctx.fillStyle = "#ff77aa"; ctx.font = "8px 'Press Start 2P'"; ctx.textAlign = "center";
-                    ctx.fillText("BIENVENIDA AL VALLE GIGANTE", canvas.width / 2, 28);
-                }
+
+        // --- SISTEMA DE LA HISTORIA (NARRATIVA VISUAL) ---
+        const story = [
+            {
+                title: "Un Día Especial",
+                text: "<p>Hay días en el calendario que pasan desapercibidos, pero luego hay fechas que el universo marca con un brillo distinto.</p><p>Hoy, 7 de octubre, es uno de esos días.</p>",
+                btn: "Avanzar"
+            },
+            {
+                title: "El Valle de Tamo",
+                text: "<p>Sé que esperabas recorrer un mapa de plataformas, saltar y encontrar latas de Monster escondidas por ahí...</p><p>Pero a veces, las aventuras más bonitas no requieren saltos precisos, sino simplemente detenerse a observar lo increíble que eres.</p>",
+                btn: "Continuar"
+            },
+            {
+                title: "Tu Propia Magia",
+                text: "<p>Admiro profundamente esa creatividad infinita que tienes. Esa capacidad tuya para construir mundos, escribir códigos y darle forma a cosas maravillosas de la nada.</p><p>Eres una mente brillante, Vanessa, pero sobre todo, una persona que ilumina la vida de quienes tienen la suerte de rodearte.</p>",
+                btn: "Siguiente"
+            },
+            {
+                title: "Feliz Cumpleaños",
+                text: "<p>Así que, aunque no haya un 'Cofre Dorado' pixelado al final de un nivel de juego, este es mi tesoro para ti el día de hoy.</p><p>Que este nuevo año te traiga risas sinceras, éxitos en todo lo que te propongas, energía ilimitada y la absoluta certeza de que eres inmensamente valiosa.</p><p>Feliz cumpleaños, Vanessa.</p>",
+                btn: "Finalizar"
             }
-            requestAnimationFrame(gameLoop);
-        }
+        ];
 
-        // Sistema de Interacción
-        function interact() {
-            if (gameState === 'INTRO') return triggerPixelExplosion();
-            if (gameState === 'PLAY') {
-                const distChest = Math.hypot(player.x - 700, player.y - 415);
-                const distHouse = Math.hypot(player.x - 390, player.y - 390);
-                const distMonster = Math.hypot(player.x - 450, player.y - 400);
+        let currentStep = -1;
+        const panel = document.getElementById('panel');
+        const titleEl = document.getElementById('title');
+        const textEl = document.getElementById('text-content');
+        const btnEl = document.getElementById('nextBtn');
+        const sigEl = document.getElementById('signature');
 
-                dialogBox.style.display = "block";
-                if (distChest < 40) {
-                    dialogSpeaker.innerText = "👑 COFRE DE CUMPLEAÑOS (7 DE OCTUBRE)";
-                    dialogText.innerText = "¡Feliz Cumpleaños Vanessa! Atravesaste el río y los guardianes. Que hoy cada estrella brille a tu favor, que no te falte la energía, la paz de una buena lectura y la certeza de que alguien te cuida con todo el cariño.";
-                } else if (distMonster < 30) {
-                    dialogSpeaker.innerText = "⚡ ELIXIR MONSTER ENERGÉTICA";
-                    dialogText.innerText = "Una bebida legendaria que te da energía infinita para recorrer este inmenso valle.";
-                } else if (distHouse < 50) {
-                    dialogSpeaker.innerText = "🏠 EL HOGAR DEL ALBA";
-                    dialogText.innerText = "Tu enorme casa de madera azul. Un refugio seguro lleno de calidez. ¡Ve hacia el este, cruza el río para encontrar tu sorpresa!";
-                } else {
-                    dialogSpeaker.innerText = "📜 EXPLORACIÓN DEL VALLE";
-                    dialogText.innerText = "El mundo es inmenso. Sigue el camino de tierra hacia la derecha (este), cruza el puente y busca el Cofre Dorado.";
+        function updateStory() {
+            if (currentStep >= story.length) return;
+
+            // Ocultar panel suavemente
+            panel.classList.remove('active');
+
+            setTimeout(() => {
+                if (currentStep === story.length - 1) {
+                    // Última escena
+                    sigEl.style.display = 'block';
+                    btnEl.style.display = 'none';
                 }
+
+                titleEl.innerHTML = story[currentStep].title;
+                textEl.innerHTML = story[currentStep].text;
+                btnEl.innerHTML = story[currentStep].btn;
+                
+                currentScene = currentStep;
+                createElements(); // Cambiar el fondo según la escena
+
+                // Mostrar panel suavemente
+                panel.classList.add('active');
+            }, 800); // Espera a que termine la transición de opacidad
+        }
+
+        btnEl.addEventListener('click', (e) => {
+            currentStep++;
+            if (currentStep === 0) {
+                // Primer clic, iniciar música si la hubiera, arrancar historia
+                updateStory();
+            } else {
+                updateStory();
             }
-        }
-
-        // Controles Táctiles y Teclado
-        function bindTouch(btnId, key) {
-            const btn = document.getElementById(btnId);
-            btn.addEventListener('touchstart', (e) => { e.preventDefault(); inputs[key] = true; });
-            btn.addEventListener('touchend', (e) => { e.preventDefault(); inputs[key] = false; });
-            btn.addEventListener('mousedown', () => inputs[key] = true);
-            btn.addEventListener('mouseup', () => inputs[key] = false);
-        }
-
-        bindTouch('btn-up', 'up'); bindTouch('btn-down', 'down');
-        bindTouch('btn-left', 'left'); bindTouch('btn-right', 'right');
-
-        window.addEventListener('keydown', e => {
-            if (['ArrowUp', 'w', 'W'].includes(e.key)) inputs.up = true;
-            if (['ArrowDown', 's', 'S'].includes(e.key)) inputs.down = true;
-            if (['ArrowLeft', 'a', 'A'].includes(e.key)) inputs.left = true;
-            if (['ArrowRight', 'd', 'D'].includes(e.key)) inputs.right = true;
-            if ([' ', 'Enter', 'e', 'E'].includes(e.key)) interact();
-        });
-        window.addEventListener('keyup', e => {
-            if (['ArrowUp', 'w', 'W'].includes(e.key)) inputs.up = false;
-            if (['ArrowDown', 's', 'S'].includes(e.key)) inputs.down = false;
-            if (['ArrowLeft', 'a', 'A'].includes(e.key)) inputs.left = false;
-            if (['ArrowRight', 'd', 'D'].includes(e.key)) inputs.right = false;
+            createClickEffect(e.clientX, e.clientY);
         });
 
-        document.getElementById('btn-a').addEventListener('click', interact);
-        canvas.addEventListener('click', () => { if (gameState === 'INTRO') triggerPixelExplosion(); });
+        // Efecto visual al hacer clic
+        function createClickEffect(x, y) {
+            const particle = document.createElement('div');
+            particle.classList.add('click-particle');
+            particle.style.left = x - 4 + 'px';
+            particle.style.top = y - 4 + 'px';
+            document.body.appendChild(particle);
+            setTimeout(() => particle.remove(), 600);
+        }
 
-        loadAssets();
-        gameLoop();
+        // Iniciar pantalla inicial
+        setTimeout(() => panel.classList.add('active'), 500);
+
     </script>
 </body>
 </html>
