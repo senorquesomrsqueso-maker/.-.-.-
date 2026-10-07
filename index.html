@@ -4,175 +4,64 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Valle de Tamo - Edición Especial Vanessa</title>
-    <!-- Fuente Pixel Art Retro -->
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
-    <!-- Librería JSZip -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
     <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            user-select: none;
-            -webkit-user-select: none;
-            touch-action: none;
-        }
+        * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; touch-action: none; }
         body {
-            background-color: #050508;
-            color: #ffffff;
-            font-family: 'Press Start 2P', monospace;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            min-height: 100vh;
-            overflow: hidden;
+            background-color: #050508; color: #ffffff; font-family: 'Press Start 2P', monospace;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            min-height: 100vh; overflow: hidden;
         }
 
-        /* Envoltorio del Juego Responsive */
         #game-container {
-            position: relative;
-            width: 100vw;
-            max-width: 512px;
-            height: 56vh;
-            max-height: 384px;
-            background: #000;
-            border: 4px solid #2d323f;
-            border-radius: 8px;
-            box-shadow: 0 0 25px rgba(255, 119, 170, 0.3);
-            overflow: hidden;
+            position: relative; width: 100vw; max-width: 512px; height: 56vh; max-height: 384px;
+            background: #000; border: 4px solid #2d323f; border-radius: 8px;
+            box-shadow: 0 0 25px rgba(255, 119, 170, 0.3); overflow: hidden;
         }
 
-        canvas {
-            width: 100%;
-            height: 100%;
-            display: block;
-            image-rendering: pixelated;
-            image-rendering: crisp-edges;
-        }
+        canvas { width: 100%; height: 100%; display: block; image-rendering: pixelated; image-rendering: crisp-edges; }
 
-        /* Cuadro de Diálogo Estilo RPG Clásico */
         #dialog-box {
-            position: absolute;
-            bottom: 8px;
-            left: 8px;
-            right: 8px;
-            background: rgba(10, 10, 18, 0.95);
-            border: 3px solid #ff77aa;
-            border-radius: 6px;
-            padding: 10px;
-            font-size: 8px;
-            line-height: 1.6;
-            color: #fff;
-            display: none;
-            box-shadow: inset 0 0 0 2px #000, 0 4px 10px rgba(0,0,0,0.8);
-            z-index: 10;
+            position: absolute; bottom: 8px; left: 8px; right: 8px;
+            background: rgba(10, 10, 18, 0.95); border: 3px solid #ff77aa; border-radius: 6px;
+            padding: 10px; font-size: 8px; line-height: 1.6; color: #fff; display: none;
+            box-shadow: inset 0 0 0 2px #000, 0 4px 10px rgba(0,0,0,0.8); z-index: 10;
         }
 
-        .dialog-speaker {
-            color: #ff77aa;
-            margin-bottom: 6px;
-            text-transform: uppercase;
-            font-size: 9px;
-            text-shadow: 0 0 4px rgba(255, 119, 170, 0.5);
-        }
+        .dialog-speaker { color: #ff77aa; margin-bottom: 6px; text-transform: uppercase; font-size: 9px; }
 
-        /* Controles Táctiles para Móvil */
         #controls {
-            width: 100vw;
-            max-width: 512px;
-            height: 38vh;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 10px 20px;
-            background: #0b0d12;
-            border-top: 2px solid #1a1d24;
+            width: 100vw; max-width: 512px; height: 38vh; display: flex; justify-content: space-between;
+            align-items: center; padding: 10px 20px; background: #0b0d12; border-top: 2px solid #1a1d24;
         }
 
-        .dpad {
-            display: grid;
-            grid-template-columns: repeat(3, 48px);
-            grid-template-rows: repeat(3, 48px);
-            gap: 3px;
-        }
-
-        .btn-pad {
-            background: #1c202b;
-            border: 2px solid #3a4154;
-            color: #fff;
-            font-family: 'Press Start 2P', monospace;
-            font-size: 12px;
-            border-radius: 6px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 4px 0 #0f1117;
-        }
-
-        .btn-pad:active {
-            transform: translateY(2px);
-            box-shadow: 0 2px 0 #0f1117;
-            background: #ff77aa;
-            color: #000;
-        }
-
-        .action-container {
-            display: flex;
-            gap: 12px;
-        }
-
-        .btn-action {
-            width: 64px;
-            height: 64px;
-            border-radius: 50%;
-            background: #ff77aa;
-            border: 3px solid #fff;
-            color: #000;
-            font-family: 'Press Start 2P', monospace;
-            font-size: 11px;
-            font-weight: bold;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 4px 0 #aa4477;
-        }
-
-        .btn-action:active {
-            transform: translateY(2px);
-            box-shadow: 0 2px 0 #aa4477;
-            background: #ff99cc;
-        }
+        .dpad { display: grid; grid-template-columns: repeat(3, 48px); grid-template-rows: repeat(3, 48px); gap: 3px; }
+        .btn-pad { background: #1c202b; border: 2px solid #3a4154; color: #fff; font-family: 'Press Start 2P', monospace; font-size: 12px; border-radius: 6px; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 0 #0f1117; }
+        .btn-pad:active { transform: translateY(2px); box-shadow: 0 2px 0 #0f1117; background: #ff77aa; color: #000; }
+        
+        .action-container { display: flex; gap: 12px; }
+        .btn-action { width: 64px; height: 64px; border-radius: 50%; background: #ff77aa; border: 3px solid #fff; color: #000; font-family: 'Press Start 2P', monospace; font-size: 11px; font-weight: bold; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 0 #aa4477; }
+        .btn-action:active { transform: translateY(2px); box-shadow: 0 2px 0 #aa4477; background: #ff99cc; }
     </style>
 </head>
 <body>
 
     <div id="game-container">
-        <canvas id="gameCanvas" width="256" height="192"></canvas>
-        
+        <canvas id="gameCanvas" width="320" height="240"></canvas>
         <div id="dialog-box">
             <div class="dialog-speaker" id="dialog-speaker">PERSONAJE</div>
-            <div id="dialog-text">Texto de aventura...</div>
+            <div id="dialog-text">Texto...</div>
         </div>
     </div>
 
-    <!-- Controles táctiles estilo Consola Portátil -->
     <div id="controls">
         <div class="dpad">
-            <div></div>
-            <button class="btn-pad" id="btn-up">▲</button>
-            <div></div>
-            <button class="btn-pad" id="btn-left">◄</button>
-            <div></div>
-            <button class="btn-pad" id="btn-right">►</button>
-            <div></div>
-            <button class="btn-pad" id="btn-down">▼</button>
-            <div></div>
+            <div></div><button class="btn-pad" id="btn-up">▲</button><div></div>
+            <button class="btn-pad" id="btn-left">◄</button><div></div><button class="btn-pad" id="btn-right">►</button>
+            <div></div><button class="btn-pad" id="btn-down">▼</button><div></div>
         </div>
-
-        <div class="action-container">
-            <button class="btn-action" id="btn-a">A</button>
-        </div>
+        <div class="action-container"><button class="btn-action" id="btn-a">A</button></div>
     </div>
 
     <script>
@@ -184,347 +73,263 @@
         const dialogSpeaker = document.getElementById('dialog-speaker');
         const dialogText = document.getElementById('dialog-text');
 
-        // Sintetizador de audio retro para efectos de sonido 8-bit
-        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        function playSound(freq, duration) {
-            try {
-                if (audioCtx.state === 'suspended') audioCtx.resume();
-                const osc = audioCtx.createOscillator();
-                const gain = audioCtx.createGain();
-                osc.type = 'square';
-                osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
-                gain.gain.setValueAtTime(0.05, audioCtx.currentTime);
-                gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
-                osc.connect(gain);
-                gain.connect(audioCtx.destination);
-                osc.start();
-                osc.stop(audioCtx.currentTime + duration);
-            } catch(e) {}
-        }
+        // Configuración de Mundo Gigante
+        const WORLD_W = 800;
+        const WORLD_H = 800;
+        
+        // Cámara
+        const camera = { x: 0, y: 0, w: canvas.width, h: canvas.height };
 
-        // Registro de Texturas extraídas de tus 15 ZIPs
         const textures = {};
         const zipList = [
-            "House_1_Wood_Base_Blue.zip",
-            "Oak_Tree_Small.zip",
-            "Fences.zip",
-            "Path_Tile.zip",
-            "FarmLand_Tile.zip",
-            "Chicken.zip",
-            "Cow.zip",
-            "Pig.zip",
-            "Sheep.zip",
-            "Bridge_Wood.zip",
-            "Water_Tile.zip",
-            "Cliff_Tile.zip",
-            "Skeleton.zip",
-            "Slime_Green.zip",
-            "Chest.zip"
+            "House_1_Wood_Base_Blue.zip", "Oak_Tree_Small.zip", "Fences.zip", 
+            "Path_Tile.zip", "FarmLand_Tile.zip", "Chicken.zip", "Cow.zip", 
+            "Pig.zip", "Sheep.zip", "Bridge_Wood.zip", "Water_Tile.zip", 
+            "Cliff_Tile.zip", "Skeleton.zip", "Slime_Green.zip", "Chest.zip"
         ];
 
-        let gameState = 'INTRO'; // 'INTRO' -> 'EXPLOSION' -> 'PLAY'
+        let gameState = 'LOADING'; // LOADING -> INTRO -> EXPLOSION -> PLAY
+        let zipsLoaded = 0;
         let particles = [];
         let bannerTimer = 0;
 
-        // Entidades y Jugador
-        const player = {
-            x: 40,
-            y: 85,
-            w: 16,
-            h: 16,
-            speed: 1.2
-        };
-
-        // Animales con movimiento dinámico
-        const animals = [
-            { type: 'chicken', x: 95, y: 125, vx: 0.2, vy: 0, timer: 0 },
-            { type: 'cow', x: 110, y: 130, vx: 0, vy: 0.15, timer: 0 },
-            { type: 'pig', x: 92, y: 140, vx: -0.15, vy: 0, timer: 0 },
-            { type: 'sheep', x: 120, y: 142, vx: 0.1, vy: 0.1, timer: 0 }
-        ];
-
+        // Jugador inicia en el centro del mundo
+        const player = { x: 400, y: 400, w: 16, h: 16, speed: 2.0 };
         const inputs = { up: false, down: false, left: false, right: false };
 
-        // Extractor de ZIPs transparente
+        // Generación del Mapa Gigante
+        const trees = [];
+        for(let i=0; i<100; i++) trees.push({x: Math.random() * WORLD_W, y: Math.random() * WORLD_H});
+        
+        const animals = [
+            { type: 'chicken', x: 350, y: 480, vx: 0, vy: 0, timer: 0 },
+            { type: 'chicken', x: 360, y: 490, vx: 0, vy: 0, timer: 0 },
+            { type: 'cow', x: 380, y: 470, vx: 0, vy: 0, timer: 0 },
+            { type: 'pig', x: 320, y: 485, vx: 0, vy: 0, timer: 0 },
+            { type: 'sheep', x: 340, y: 500, vx: 0, vy: 0, timer: 0 }
+        ];
+
+        const enemies = [
+            { type: 'slime_green', x: 500, y: 300 },
+            { type: 'slime_green', x: 520, y: 320 },
+            { type: 'skeleton', x: 680, y: 380 } // Protege el cofre
+        ];
+
+        // Extractor de ZIPs (Avanzado y Estricto)
         async function loadAssets() {
             for (let zipName of zipList) {
                 try {
                     const res = await fetch(zipName);
-                    if (!res.ok) continue;
+                    if (!res.ok) throw new Error("No encontrado");
                     const blob = await res.blob();
                     const zip = new JSZip();
                     const zipContent = await zip.loadAsync(blob);
 
-                    for (let path in zipContent.files) {
-                        const file = zipContent.files[path];
-                        if (!file.dir && /\.(png|jpg)$/i.test(file.name)) {
-                            const imgBlob = await file.async("blob");
-                            const url = URL.createObjectURL(imgBlob);
-                            const img = new Image();
-                            img.src = url;
-                            await new Promise(r => img.onload = r);
-                            
-                            const keyName = zipName.replace('.zip', '').toLowerCase();
-                            const fileName = file.name.split('/').pop().toLowerCase();
-                            textures[keyName] = img;
-                            textures[fileName] = img;
-                        }
+                    // Buscar cualquier PNG dentro del ZIP (ignorando MACOSX)
+                    const imageFiles = Object.values(zipContent.files).filter(f => !f.dir && !f.name.includes('__MACOSX') && /\.(png|jpg|gif)$/i.test(f.name));
+                    
+                    if (imageFiles.length > 0) {
+                        const file = imageFiles[0];
+                        const imgBlob = await file.async("blob");
+                        const url = URL.createObjectURL(imgBlob);
+                        const img = new Image();
+                        img.src = url;
+                        await new Promise(r => img.onload = r);
+                        
+                        const keyName = zipName.replace('.zip', '').toLowerCase();
+                        textures[keyName] = img;
                     }
-                } catch (e) {}
+                } catch (e) {
+                    console.error("Fallo al cargar: " + zipName);
+                }
+                zipsLoaded++;
             }
+            // Cuando termina, pasa a la intro
+            gameState = 'INTRO';
         }
 
-        // Renderizado de Sprite con fallback de Pixel Art Dibujado
-        function drawSprite(key, x, y, w, h, customDrawFunc) {
+        function drawSprite(key, x, y, w, h, fallbackColor) {
             const img = textures[key.toLowerCase()];
             if (img && img.complete) {
                 ctx.drawImage(img, x, y, w, h);
-            } else if (customDrawFunc) {
-                customDrawFunc(x, y, w, h);
+            } else {
+                ctx.fillStyle = fallbackColor;
+                ctx.fillRect(x, y, w, h);
             }
         }
 
-        // Transición de Explosión de Píxeles
         function triggerPixelExplosion() {
-            playSound(523, 0.15);
             gameState = 'EXPLOSION';
             particles = [];
-            for (let i = 0; i < 200; i++) {
+            for (let i = 0; i < 250; i++) {
                 particles.push({
-                    x: canvas.width / 2,
-                    y: canvas.height / 2,
-                    vx: (Math.random() - 0.5) * 7,
-                    vy: (Math.random() - 0.5) * 7,
-                    size: Math.random() * 4 + 2,
+                    x: canvas.width / 2, y: canvas.height / 2,
+                    vx: (Math.random() - 0.5) * 10, vy: (Math.random() - 0.5) * 10,
+                    size: Math.random() * 5 + 2,
                     color: ['#ff77aa', '#58a6ff', '#3fb950', '#d29922', '#ffffff'][Math.floor(Math.random() * 5)],
                     life: 1.0
                 });
             }
         }
 
-        // Actualizar posición de animales en la granja
-        function updateAnimals() {
+        function renderWorld() {
+            // Fondo Base del Mundo Gigante
+            ctx.fillStyle = "#1b4332";
+            ctx.fillRect(0, 0, WORLD_W, WORLD_H);
+
+            // Camino principal
+            for (let x = 300; x < 600; x += 16) {
+                drawSprite("path_tile", x, 420, 16, 16, "#3d2b1f");
+            }
+
+            // Gran Río
+            for (let y = 0; y < WORLD_H; y += 16) {
+                drawSprite("water_tile", 600, y, 32, 16, "#1d4ed8");
+            }
+            // Puente
+            drawSprite("bridge_wood", 590, 410, 48, 32, "#854d0e");
+
+            // Granja
+            for(let tx = 310; tx < 400; tx += 32) {
+                for(let ty = 460; ty < 520; ty += 32) {
+                    drawSprite("farmland_tile", tx, ty, 32, 32, "#78350f");
+                }
+            }
+            // Cercas
+            for(let fx = 310; fx < 400; fx += 16) drawSprite("fences", fx, 460, 16, 16, "#a16207");
+
+            // Árboles Gigantes (Bosque)
+            trees.forEach(t => {
+                // Evitar dibujar árboles sobre el centro, el río o el camino
+                if (t.x > 300 && t.x < 450 && t.y > 350 && t.y < 550) return; 
+                if (t.x > 580 && t.x < 650) return;
+                drawSprite("oak_tree_small", t.x, t.y, 32, 48, "#15803d");
+            });
+
+            // Casa Azul de Vanessa (Centro)
+            drawSprite("house_1_wood_base_blue", 360, 360, 64, 64, "#2563eb");
+
+            // Objetos Únicos
+            ctx.fillStyle = "#22c55e"; // Monster
+            ctx.fillRect(450, 400 + Math.sin(Date.now()*0.005)*2, 10, 16);
+            ctx.fillStyle = "#fff"; ctx.font = "8px 'Press Start 2P'"; ctx.fillText("M", 451, 412 + Math.sin(Date.now()*0.005)*2);
+
+            // Animales
             animals.forEach(a => {
                 a.timer++;
-                if (a.timer > 60 + Math.random() * 60) {
-                    a.timer = 0;
-                    a.vx = (Math.random() - 0.5) * 0.3;
-                    a.vy = (Math.random() - 0.5) * 0.3;
+                if (a.timer > 50 + Math.random() * 50) {
+                    a.timer = 0; a.vx = (Math.random() - 0.5) * 0.5; a.vy = (Math.random() - 0.5) * 0.5;
                 }
-                a.x += a.vx;
-                a.y += a.vy;
-
-                // Mantener dentro del área de la granja
-                a.x = Math.max(88, Math.min(132, a.x));
-                a.y = Math.max(120, Math.min(150, a.y));
-            });
-        }
-
-        // Renderizado del Mapa 2D Completo
-        function renderWorld() {
-            // Fondo Verde (Pradera)
-            ctx.fillStyle = "#1b4332";
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-            // 1. Caminos y Suelo (Path_Tile / Water_Tile / Cliff_Tile)
-            for (let x = 0; x < canvas.width; x += 16) {
-                drawSprite("path_tile", x, 80, 16, 16, (x, y, w, h) => {
-                    ctx.fillStyle = "#3d2b1f"; ctx.fillRect(x, y, w, h);
-                });
-            }
-            
-            // Río y Puente (Water_Tile / Bridge_Wood)
-            for (let y = 0; y < canvas.height; y += 16) {
-                drawSprite("water_tile", 180, y, 16, 16, (x, y, w, h) => {
-                    ctx.fillStyle = "#1d4ed8"; ctx.fillRect(x, y, w, h);
-                });
-            }
-            drawSprite("bridge_wood", 176, 76, 24, 24, (x, y, w, h) => {
-                ctx.fillStyle = "#854d0e"; ctx.fillRect(x, y, w, h);
+                a.x += a.vx; a.y += a.vy;
+                a.x = Math.max(310, Math.min(390, a.x)); a.y = Math.max(470, Math.min(510, a.y));
+                drawSprite(a.type, a.x, a.y, 16, 16, a.type === 'chicken'?'#fde047':'#ffffff');
             });
 
-            // 2. Acantilados al norte (Cliff_Tile)
-            for (let x = 0; x < canvas.width; x += 16) {
-                drawSprite("cliff_tile", x, 0, 16, 16, (x, y, w, h) => {
-                    ctx.fillStyle = "#475569"; ctx.fillRect(x, y, w, h);
-                });
-            }
-
-            // 3. Cabaña Azul (House_1_Wood_Base_Blue) y Gran Biblioteca al Este
-            drawSprite("house_1_wood_base_blue", 20, 20, 48, 48, (x, y, w, h) => {
-                ctx.fillStyle = "#2563eb"; ctx.fillRect(x, y + 16, w, h - 16);
-                ctx.fillStyle = "#dc2626"; ctx.beginPath(); ctx.moveTo(x, y + 16); ctx.lineTo(x + w/2, y); ctx.lineTo(x + w, y + 16); ctx.fill();
+            // Enemigos/Guardianes
+            enemies.forEach(e => {
+                drawSprite(e.type, e.x, e.y, 20, 20, e.type === 'skeleton'?'#cbd5e1':'#4ade80');
             });
 
-            // Árboles y Cercas (Oak_Tree_Small / Fences)
-            drawSprite("oak_tree_small", 85, 20, 24, 32, (x, y, w, h) => {
-                ctx.fillStyle = "#15803d"; ctx.beginPath(); ctx.arc(x + 12, y + 12, 12, 0, Math.PI*2); ctx.fill();
-            });
-            drawSprite("oak_tree_small", 120, 20, 24, 32, (x, y, w, h) => {
-                ctx.fillStyle = "#15803d"; ctx.beginPath(); ctx.arc(x + 12, y + 12, 12, 0, Math.PI*2); ctx.fill();
-            });
-            drawSprite("fences", 85, 115, 55, 12, (x, y, w, h) => {
-                ctx.fillStyle = "#a16207"; ctx.fillRect(x, y, w, 4);
-            });
+            // Cofre Gigante (Al otro lado del puente)
+            drawSprite("chest", 700, 415, 24, 24, "#eab308");
 
-            // 4. Granja y Parcelas Cultivables (FarmLand_Tile)
-            drawSprite("farmland_tile", 88, 120, 48, 32, (x, y, w, h) => {
-                ctx.fillStyle = "#78350f"; ctx.fillRect(x, y, w, h);
-            });
-
-            // Animales Animados en Movimiento
-            animals.forEach(a => {
-                drawSprite(a.type, a.x, a.y, 12, 12, (x, y) => {
-                    ctx.fillStyle = a.type === 'chicken' ? '#fde047' : (a.type === 'cow' ? '#ffffff' : '#f472b6');
-                    ctx.fillRect(x, y, 10, 10);
-                });
-            });
-
-            // 5. Objetos Especiales: Lata de Monster Energética y Gatos
-            ctx.fillStyle = "#22c55e"; // Lata de Monster Verde Flotante
-            let floatY = Math.sin(Date.now() * 0.005) * 2;
-            ctx.fillRect(150, 72 + floatY, 8, 12);
-            ctx.fillStyle = "#fff";
-            ctx.font = "6px 'Press Start 2P'";
-            ctx.fillText("M", 151, 80 + floatY);
-
-            // Gatos Guardianes
-            ctx.fillStyle = "#f97316";
-            ctx.fillRect(30, 72, 8, 8); // Gato junto a la cabaña
-
-            // 6. Enemigos / Guardianes del Valle (Slime_Green / Skeleton)
-            drawSprite("slime_green", 140, 82, 12, 12, (x, y) => {
-                ctx.fillStyle = "#4ade80"; ctx.beginPath(); ctx.arc(x+6, y+6, 6, 0, Math.PI*2); ctx.fill();
-            });
-            drawSprite("skeleton", 220, 65, 14, 18, (x, y) => {
-                ctx.fillStyle = "#f8fafc"; ctx.fillRect(x, y, 12, 16);
-            });
-
-            // 7. Cofre Legendario (Chest)
-            drawSprite("chest", 220, 82, 16, 16, (x, y, w, h) => {
-                ctx.fillStyle = "#eab308"; ctx.fillRect(x, y, w, h);
-            });
-
-            // 8. Jugador (Princesa)
+            // Jugador
             ctx.fillStyle = "#ff77aa";
-            ctx.fillRect(player.x + 2, player.y + 2, 12, 12);
+            ctx.fillRect(player.x, player.y, player.w, player.h);
             ctx.fillStyle = "#fff";
-            ctx.font = "8px 'Press Start 2P'";
-            ctx.fillText("👑", player.x, player.y + 10);
+            ctx.font = "10px 'Press Start 2P'";
+            ctx.fillText("👑", player.x - 2, player.y - 5);
         }
 
-        // Bucle Principal
         function gameLoop() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-            if (gameState === 'INTRO') {
-                // Pantalla Mística de Inicio
-                ctx.fillStyle = "#050508";
-                ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-                ctx.fillStyle = "#ff77aa";
-                ctx.font = "8px 'Press Start 2P'";
-                ctx.textAlign = "center";
-                ctx.fillText("¿QUIÉN ERES?", canvas.width / 2, 60);
-
-                ctx.fillStyle = "#8b949e";
-                ctx.font = "6px 'Press Start 2P'";
-                ctx.fillText("El destino del valle despierta...", canvas.width / 2, 90);
-
-                ctx.fillStyle = "#ffffff";
-                let pulse = Math.abs(Math.sin(Date.now() * 0.004));
-                ctx.globalAlpha = pulse;
-                ctx.fillText("[ TOCA PARA COMENZAR ]", canvas.width / 2, 140);
+            if (gameState === 'LOADING') {
+                ctx.fillStyle = "#050508"; ctx.fillRect(0, 0, canvas.width, canvas.height);
+                ctx.fillStyle = "#ff77aa"; ctx.font = "10px 'Press Start 2P'"; ctx.textAlign = "center";
+                ctx.fillText("CARGANDO TEXTURAS...", canvas.width / 2, canvas.height / 2 - 10);
+                ctx.fillStyle = "#ffffff"; ctx.font = "8px 'Press Start 2P'";
+                ctx.fillText(`${zipsLoaded} / 15 Archivos ZIP`, canvas.width / 2, canvas.height / 2 + 10);
+            } 
+            else if (gameState === 'INTRO') {
+                ctx.fillStyle = "#050508"; ctx.fillRect(0, 0, canvas.width, canvas.height);
+                ctx.fillStyle = "#ff77aa"; ctx.font = "12px 'Press Start 2P'"; ctx.textAlign = "center";
+                ctx.fillText("¿QUIÉN ERES?", canvas.width / 2, canvas.height / 2 - 20);
+                ctx.fillStyle = "#8b949e"; ctx.font = "8px 'Press Start 2P'";
+                ctx.fillText("El destino del valle gigante...", canvas.width / 2, canvas.height / 2 + 10);
+                ctx.fillStyle = "#ffffff"; ctx.globalAlpha = Math.abs(Math.sin(Date.now() * 0.004));
+                ctx.fillText("[ TOCA PARA COMENZAR ]", canvas.width / 2, canvas.height / 2 + 50);
                 ctx.globalAlpha = 1.0;
-
-            } else if (gameState === 'EXPLOSION') {
-                // Explosión de Píxeles
-                ctx.fillStyle = "#000";
-                ctx.fillRect(0, 0, canvas.width, canvas.height);
-
+            } 
+            else if (gameState === 'EXPLOSION') {
+                ctx.fillStyle = "#000"; ctx.fillRect(0, 0, canvas.width, canvas.height);
                 let alive = false;
                 for (let p of particles) {
-                    p.x += p.vx;
-                    p.y += p.vy;
-                    p.life -= 0.02;
-                    if (p.life > 0) {
-                        alive = true;
-                        ctx.fillStyle = p.color;
-                        ctx.fillRect(p.x, p.y, p.size, p.size);
-                    }
+                    p.x += p.vx; p.y += p.vy; p.life -= 0.02;
+                    if (p.life > 0) { alive = true; ctx.fillStyle = p.color; ctx.fillRect(p.x, p.y, p.size, p.size); }
                 }
+                if (!alive) { gameState = 'PLAY'; bannerTimer = 200; }
+            } 
+            else if (gameState === 'PLAY') {
+                // Movimiento
+                if (inputs.up) player.y -= player.speed;
+                if (inputs.down) player.y += player.speed;
+                if (inputs.left) player.x -= player.speed;
+                if (inputs.right) player.x += player.speed;
+                
+                player.x = Math.max(0, Math.min(WORLD_W - player.w, player.x));
+                player.y = Math.max(0, Math.min(WORLD_H - player.h, player.y));
 
-                if (!alive) {
-                    gameState = 'PLAY';
-                    bannerTimer = 180;
-                }
+                // Cámara sigue al jugador
+                camera.x = player.x - camera.w / 2;
+                camera.y = player.y - camera.h / 2;
+                camera.x = Math.max(0, Math.min(WORLD_W - camera.w, camera.x));
+                camera.y = Math.max(0, Math.min(WORLD_H - camera.h, camera.y));
 
-            } else if (gameState === 'PLAY') {
-                updatePlayer();
-                updateAnimals();
+                // Renderizar Mundo con Cámara
+                ctx.save();
+                ctx.translate(-camera.x, -camera.y);
                 renderWorld();
+                ctx.restore();
 
-                // Banner Flotante de Bienvenida
+                // UI Fija sobre la cámara
                 if (bannerTimer > 0) {
                     bannerTimer--;
-                    ctx.fillStyle = "rgba(10, 10, 18, 0.85)";
-                    ctx.fillRect(8, 8, canvas.width - 16, 26);
-                    ctx.strokeStyle = "#ff77aa";
-                    ctx.strokeRect(8, 8, canvas.width - 16, 26);
-
-                    ctx.fillStyle = "#ff77aa";
-                    ctx.font = "6px 'Press Start 2P'";
-                    ctx.textAlign = "center";
-                    ctx.fillText("BIENVENIDA AL VALLE DE TAMO", canvas.width / 2, 24);
+                    ctx.fillStyle = "rgba(10, 10, 18, 0.85)"; ctx.fillRect(10, 10, canvas.width - 20, 30);
+                    ctx.strokeStyle = "#ff77aa"; ctx.strokeRect(10, 10, canvas.width - 20, 30);
+                    ctx.fillStyle = "#ff77aa"; ctx.font = "8px 'Press Start 2P'"; ctx.textAlign = "center";
+                    ctx.fillText("BIENVENIDA AL VALLE GIGANTE", canvas.width / 2, 28);
                 }
             }
-
             requestAnimationFrame(gameLoop);
         }
 
-        // Movimiento del Jugador
-        function updatePlayer() {
-            if (inputs.up) player.y -= player.speed;
-            if (inputs.down) player.y += player.speed;
-            if (inputs.left) player.x -= player.speed;
-            if (inputs.right) player.x += player.speed;
-
-            player.x = Math.max(0, Math.min(canvas.width - 16, player.x));
-            player.y = Math.max(0, Math.min(canvas.height - 16, player.y));
-        }
-
-        // Sistema de Interacción y Diálogos Reales
+        // Sistema de Interacción
         function interact() {
-            playSound(440, 0.1);
-            if (gameState === 'INTRO') {
-                triggerPixelExplosion();
-                return;
-            }
-
+            if (gameState === 'INTRO') return triggerPixelExplosion();
             if (gameState === 'PLAY') {
-                const distChest = Math.hypot(player.x - 220, player.y - 82);
-                const distHouse = Math.hypot(player.x - 35, player.y - 35);
-                const distMonster = Math.hypot(player.x - 150, player.y - 75);
+                const distChest = Math.hypot(player.x - 700, player.y - 415);
+                const distHouse = Math.hypot(player.x - 390, player.y - 390);
+                const distMonster = Math.hypot(player.x - 450, player.y - 400);
 
                 dialogBox.style.display = "block";
-
-                if (distChest < 25) {
+                if (distChest < 40) {
                     dialogSpeaker.innerText = "👑 COFRE DE CUMPLEAÑOS (7 DE OCTUBRE)";
-                    dialogText.innerText = "¡Feliz Cumpleaños Princesa! Que hoy cada estrella brille a tu favor, que nunca te falte la energía para conquistar tus metas, la paz de una buena lectura en tu biblioteca secreta, las risas con tus amigas y la certeza de que hay alguien que cuida cada uno de tus pasos con todo el cariño del mundo.";
-                } else if (distMonster < 25) {
+                    dialogText.innerText = "¡Feliz Cumpleaños Vanessa! Atravesaste el río y los guardianes. Que hoy cada estrella brille a tu favor, que no te falte la energía, la paz de una buena lectura y la certeza de que alguien te cuida con todo el cariño.";
+                } else if (distMonster < 30) {
                     dialogSpeaker.innerText = "⚡ ELIXIR MONSTER ENERGÉTICA";
-                    dialogText.innerText = "Una bebida legendaria que otorga concentración y energía infinita a la Princesa para sus aventuras.";
-                } else if (distHouse < 35) {
+                    dialogText.innerText = "Una bebida legendaria que te da energía infinita para recorrer este inmenso valle.";
+                } else if (distHouse < 50) {
                     dialogSpeaker.innerText = "🏠 EL HOGAR DEL ALBA";
-                    dialogText.innerText = "Tu acogedora casa de madera azul en el valle. Un refugio seguro lleno de calidez y paz.";
+                    dialogText.innerText = "Tu enorme casa de madera azul. Un refugio seguro lleno de calidez. ¡Ve hacia el este, cruza el río para encontrar tu sorpresa!";
                 } else {
                     dialogSpeaker.innerText = "📜 EXPLORACIÓN DEL VALLE";
-                    dialogText.innerText = "Cruza el puente de madera hacia el este y acércate al Cofre Dorado para abrir tu sorpresa.";
+                    dialogText.innerText = "El mundo es inmenso. Sigue el camino de tierra hacia la derecha (este), cruza el puente y busca el Cofre Dorado.";
                 }
             }
         }
 
-        // Vincular Controles Táctiles y Teclado
+        // Controles Táctiles y Teclado
         function bindTouch(btnId, key) {
             const btn = document.getElementById(btnId);
             btn.addEventListener('touchstart', (e) => { e.preventDefault(); inputs[key] = true; });
@@ -533,32 +338,26 @@
             btn.addEventListener('mouseup', () => inputs[key] = false);
         }
 
-        bindTouch('btn-up', 'up');
-        bindTouch('btn-down', 'down');
-        bindTouch('btn-left', 'left');
-        bindTouch('btn-right', 'right');
+        bindTouch('btn-up', 'up'); bindTouch('btn-down', 'down');
+        bindTouch('btn-left', 'left'); bindTouch('btn-right', 'right');
 
         window.addEventListener('keydown', e => {
-            if (e.key === 'ArrowUp' || e.key === 'w' || e.key === 'W') inputs.up = true;
-            if (e.key === 'ArrowDown' || e.key === 's' || e.key === 'S') inputs.down = true;
-            if (e.key === 'ArrowLeft' || e.key === 'a' || e.key === 'A') inputs.left = true;
-            if (e.key === 'ArrowRight' || e.key === 'd' || e.key === 'D') inputs.right = true;
-            if (e.key === ' ' || e.key === 'Enter' || e.key === 'e' || e.key === 'E') interact();
+            if (['ArrowUp', 'w', 'W'].includes(e.key)) inputs.up = true;
+            if (['ArrowDown', 's', 'S'].includes(e.key)) inputs.down = true;
+            if (['ArrowLeft', 'a', 'A'].includes(e.key)) inputs.left = true;
+            if (['ArrowRight', 'd', 'D'].includes(e.key)) inputs.right = true;
+            if ([' ', 'Enter', 'e', 'E'].includes(e.key)) interact();
         });
-
         window.addEventListener('keyup', e => {
-            if (e.key === 'ArrowUp' || e.key === 'w' || e.key === 'W') inputs.up = false;
-            if (e.key === 'ArrowDown' || e.key === 's' || e.key === 'S') inputs.down = false;
-            if (e.key === 'ArrowLeft' || e.key === 'a' || e.key === 'A') inputs.left = false;
-            if (e.key === 'ArrowRight' || e.key === 'd' || e.key === 'D') inputs.right = false;
+            if (['ArrowUp', 'w', 'W'].includes(e.key)) inputs.up = false;
+            if (['ArrowDown', 's', 'S'].includes(e.key)) inputs.down = false;
+            if (['ArrowLeft', 'a', 'A'].includes(e.key)) inputs.left = false;
+            if (['ArrowRight', 'd', 'D'].includes(e.key)) inputs.right = false;
         });
 
         document.getElementById('btn-a').addEventListener('click', interact);
-        canvas.addEventListener('click', () => {
-            if (gameState === 'INTRO') triggerPixelExplosion();
-        });
+        canvas.addEventListener('click', () => { if (gameState === 'INTRO') triggerPixelExplosion(); });
 
-        // Cargar Recursos e Iniciar
         loadAssets();
         gameLoop();
     </script>
